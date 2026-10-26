@@ -21,7 +21,7 @@ import cv2
 import numpy as np
 
 from . import gpu
-from .pipeline import PerThread, window_map
+from .pipeline import PerThread, SafeDIS, window_map
 
 
 RADIUS = 2
@@ -129,7 +129,7 @@ class _Fuser:
                  preset: int = cv2.DISOPTICAL_FLOW_PRESET_MEDIUM,
                  interpolation: int = cv2.INTER_CUBIC, on_gpu: bool = False, keep: float = 0.0) -> None:
         self.size = size
-        self.flow = cv2.DISOpticalFlow_create(preset)
+        self.flow = SafeDIS(preset)
         self.interpolation = interpolation
         self.on_gpu = on_gpu
         width, height = size

@@ -29,7 +29,7 @@ import cv2
 import numpy as np
 
 from .media import PROCESS_FLAGS
-from .pipeline import PerThread, ordered_map, submit
+from .pipeline import PerThread, SafeDIS, ordered_map, submit
 
 
 PROBES = 40
@@ -220,7 +220,7 @@ class _Patcher:
     """Paste each overlay region from the neighbour that fits its rim best."""
 
     def __init__(self, preset: int = cv2.DISOPTICAL_FLOW_PRESET_FAST) -> None:
-        self.flow = cv2.DISOpticalFlow_create(preset)
+        self.flow = SafeDIS(preset)
 
     @staticmethod
     def _small(frame: np.ndarray) -> np.ndarray:

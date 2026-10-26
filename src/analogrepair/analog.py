@@ -28,7 +28,7 @@ from typing import Iterable, Iterator
 import cv2
 import numpy as np
 
-from .pipeline import PerThread, window_map
+from .pipeline import PerThread, SafeDIS, window_map
 
 
 RADIUS = 3
@@ -82,7 +82,7 @@ class _FrameData:
 
 class _Aligner:
     def __init__(self) -> None:
-        self.flow = cv2.DISOpticalFlow_create(cv2.DISOPTICAL_FLOW_PRESET_FAST)
+        self.flow = SafeDIS(cv2.DISOPTICAL_FLOW_PRESET_FAST)
         self.grid: tuple[np.ndarray, np.ndarray] | None = None
 
     def warp(self, center: _FrameData,

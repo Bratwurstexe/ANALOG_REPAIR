@@ -20,6 +20,7 @@ import threading
 from typing import Callable, Iterable, Iterator, TypeVar
 
 import cv2
+import numpy as np
 
 
 Item = TypeVar("Item")
@@ -105,6 +106,32 @@ def window_map(frames: Iterable[Item], radius: int, prepare: Callable[[Item], ob
     """
     prepared = ordered_map(prepare, frames)
     yield from ordered_map(lambda job: work(*job), windows(prepared, radius))
+
+
+class SafeDIS:
+    """OpenCV's DIS optical flow that never ends an export.
+
+    On Linux CI, DIS has failed now and then with a resize assertion inside its
+    pyramid on frames that work on a second try. A fresh instance gets one more
+    attempt; after that the pair counts as still (zero flow), which the stages
+    treat like a neighbour that does not line up.
+    """
+
+    def __init__(self, preset: int) -> None:
+        self.preset = preset
+        self.dis = cv2.DISOpticalFlow_create(preset)
+
+    def calc(self, present: np.ndarray, other: np.ndarray, flow=None) -> np.ndarray:
+        if other.shape != present.shape:
+            other = cv2.resize(other, present.shape[1::-1], interpolation=cv2.INTER_AREA)
+        try:
+            return self.dis.calc(present, other, flow)
+        except cv2.error:
+            self.dis = cv2.DISOpticalFlow_create(self.preset)
+            try:
+                return self.dis.calc(present, other, None)
+            except cv2.error:
+                return np.zeros(present.shape[:2] + (2,), np.float32)
 
 
 class PerThread:

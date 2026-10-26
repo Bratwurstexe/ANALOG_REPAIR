@@ -58,7 +58,7 @@ import numpy as np
 
 from .analog import repair_stream
 from .media import PROCESS_FLAGS, VideoKenndaten
-from .pipeline import PerThread, ordered_map, window_map
+from .pipeline import PerThread, SafeDIS, ordered_map, window_map
 from .upscale import _median
 
 
@@ -149,7 +149,7 @@ class _Flow:
     """Dense optical flow on reduced frames and warping at any size, one per pool thread."""
 
     def __init__(self, preset: int = cv2.DISOPTICAL_FLOW_PRESET_MEDIUM) -> None:
-        self.dis = cv2.DISOpticalFlow_create(preset)
+        self.dis = SafeDIS(preset)
         self.grids: dict[tuple[int, int], tuple[np.ndarray, np.ndarray]] = {}
 
     def calc(self, present: np.ndarray, other: np.ndarray) -> np.ndarray:
