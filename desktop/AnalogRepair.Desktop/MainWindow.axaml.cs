@@ -4,7 +4,9 @@ using System.Text.Json;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
+using Avalonia.Automation;
 using Avalonia.Interactivity;
+using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform.Storage;
@@ -423,6 +425,7 @@ public partial class MainWindow : Window
         };
         FitTrimPage();
         if (index == 1 && _selected != null) { LayoutStrip(); RequestFrame(); }
+        if (index == 2) FitRepairColumnSoon();
         if (index == 3) UpdateExportSummary();
         PageScroller.Offset = new Vector(0, 0);
     }
@@ -1108,7 +1111,8 @@ public partial class MainWindow : Window
         PageContent.MaxWidth = Math.Max(1180, e.NewSize.Width - 232 - 56 - 20);
         FitTrimPage();
         if (ReviewCanvas != null) ReviewCanvas.Height = Math.Clamp(e.NewSize.Height - 600, 260, 1200);
-        FitCompareCanvas(e.NewSize.Height);
+        // The Repair page gives its settings column a little less room in a narrow window.
+        if (CleanPage != null) CleanPage.ColumnDefinitions[0].Width = new GridLength(e.NewSize.Width < 1240 ? 400 : 430);
         if (_page == 1) LayoutStrip();
     }
 
@@ -1118,9 +1122,13 @@ public partial class MainWindow : Window
         if (TrimPage == null || PageScroller == null) return;
         var dark = _page == 1;
         PageScroller.Background = dark ? new SolidColorBrush(Color.Parse("#1B2025")) : Brushes.Transparent;
-        PageContent.Margin = dark ? new Thickness(0) : new Thickness(28, 22);
         PageContent.MaxWidth = dark ? double.PositiveInfinity : Math.Max(1180, Bounds.Width - 232 - 56 - 20);
         if (dark) TrimPage.Height = Math.Max(420, PageScroller.Bounds.Height);
+        // The Repair page is laid out to the window: its columns share the height
+        // and only the Advanced list scrolls, never the page.
+        PageScroller.VerticalScrollBarVisibility = _page == 2
+            ? Avalonia.Controls.Primitives.ScrollBarVisibility.Disabled : Avalonia.Controls.Primitives.ScrollBarVisibility.Auto;
+        PageContent.Margin = dark ? new Thickness(0) : _page == 2 ? new Thickness(28, 16) : new Thickness(28, 22);
     }
 
     private void ToggleFullScreen() =>
@@ -1166,10 +1174,8 @@ public partial class MainWindow : Window
 
     private void Source_Changed(object? sender, RoutedEventArgs e)
     {
-        if (SourceNote == null || MovieCard == null || RemoveStamp == null) return;
-        SourceNote.Text = IsFilm
-            ? "Film (8 mm, Super 8, 16 mm): dust, scratches, flicker and gate weave. 0 turns a repair off."
-            : "Tape (VHS, Hi8, camcorder): tracking noise, the torn bottom band, wobbling lines and smeared colour. 0 turns a repair off.";
+        if (SourceRow == null || MovieCard == null || RemoveStamp == null) return;
+        ToolTip.SetTip(SourceRow, IsFilm ? RepairTexts.FilmNote : RepairTexts.TapeNote);
         // Picking a source by hand starts from its built-in preset; a preset or the
         // settings of the last run only set the source, they keep their own values.
         if (!_applyingPreset && sender is RadioButton { IsChecked: true }
@@ -1182,6 +1188,7 @@ public partial class MainWindow : Window
             values.SizeCapMb = current.SizeCapMb; values.Osd = current.Osd; values.Look = current.Look;
             values.LookGrade = current.LookGrade; values.LookGlow = current.LookGlow; values.LookVignette = current.LookVignette;
             values.LookGrain = current.LookGrain; values.LookFringe = current.LookFringe;
+            _basePreset = start;
             ApplyRepair(values);
         }
         UpdateCleanHint();
@@ -1204,16 +1211,43 @@ public partial class MainWindow : Window
         UpdateCleanHint();
     }
 
+    /// <summary>The step hint in the rail, the summary line and which preset card is lit.</summary>
     private void UpdateCleanHint()
     {
-        if (CleanHint == null || RemoveStamp == null) return;
-        var parts = new List<string> { IsFilm ? "Film" : "Tape" };
-        if (NoiseSlider.Value > 0) parts.Add("denoised");
+        if (CleanHint == null || RemoveStamp == null || TapeSlider == null) return;
+        var match = UpdatePresetState();
+        var parts = new List<string> { match?.Name ?? RepairTexts.CustomSettings };
         if (RemoveStamp.IsChecked == true) parts.Add("date stamp removed");
-        if (SizePercent != 100) parts.Add((SizePercent / 100.0).ToString("0.#", CultureInfo.InvariantCulture) + "×");
-        if (Effort != "balanced") parts.Add(Effort);
+        if (SizePercent != 100 && match?.Size != SizePercent) parts.Add(SizeText);
+        if (Effort != "balanced" && match?.Effort != Effort) parts.Add(Effort);
         if (LookOn) parts.Add("look");
         CleanHint.Text = string.Join(" · ", parts);
+        if (RepairSummary != null)
+        {
+            RepairSummary.Text = SummaryText();
+            ToolTip.SetTip(RepairSummary, RepairSummary.Text);
+        }
+    }
+
+    private string SizeText => (SizePercent / 100.0).ToString("0.#", CultureInfo.InvariantCulture) + "×";
+
+    /// <summary>What the current settings do, in one or two plain lines.</summary>
+    private string SummaryText()
+    {
+        static string Strength(double value) => value <= 33 ? RepairTexts.Light : value <= 66 ? RepairTexts.Medium : RepairTexts.Strong;
+        var repairs = new List<(string Name, double Value)>
+        {
+            (RepairTexts.TapeNoise, TapeSlider.Value), (RepairTexts.Noise, NoiseSlider.Value), (RepairTexts.Colour, ColorSlider.Value),
+            (RepairTexts.Dust, DustSlider.Value), (RepairTexts.Flicker, FlickerSlider.Value), (RepairTexts.Shake, StabiliseSlider.Value),
+        };
+        var parts = repairs.Where(item => item.Value > 0).OrderByDescending(item => item.Value)
+            .Select(item => $"{item.Name} {Strength(item.Value)}").ToList();
+        if (KeepGrain.IsChecked == true && NoiseSlider.Value > 0) parts.Add(RepairTexts.KeepsGrain);
+        if (RemoveStamp.IsChecked == true) parts.Add(RepairTexts.RemovesStamp);
+        if (parts.Count == 0 && SizePercent == 100) return RepairTexts.SummaryNothing;
+        if (SizePercent != 100) parts.Add(string.Format(RepairTexts.Upscaled, SizeText));
+        if (LookOn) parts.Add(RepairTexts.WithLook);
+        return $"{(IsFilm ? RepairTexts.SummaryFilm : RepairTexts.SummaryTape)}: {string.Join(", ", parts)}.";
     }
 
     private string Effort => EffortFast?.IsChecked == true ? "fast" : EffortBest?.IsChecked == true ? "best" : "balanced";
@@ -1223,10 +1257,11 @@ public partial class MainWindow : Window
         if (EffortNote == null) return;
         EffortNote.Text = Effort switch
         {
-            "fast" => "Quickest export. Fewer neighbouring frames and coarser motion; fine for a first look at a tape.",
-            "best" => "Most neighbouring frames and the finest motion. Takes the longest; for the final cut.",
-            _ => "Recommended. Nearly the quality of Best in clearly less time.",
+            "fast" => RepairTexts.FastNote,
+            "best" => RepairTexts.BestNote,
+            _ => RepairTexts.BalancedNote,
         };
+        ToolTip.SetTip(EffortNote, EffortNote.Text);
         UpdateCleanHint();
     }
 
@@ -1316,16 +1351,6 @@ public partial class MainWindow : Window
         LookSliders.IsVisible = !LookSliders.IsVisible;
         LookAdjustButton.Content = LookSliders.IsVisible ? "Hide" : "Adjust";
         ToolTip.SetTip(LookAdjustButton, LookSliders.IsVisible ? "Fold the look sliders away" : "Show the five look sliders");
-        FitCompareCanvas(Bounds.Height);
-    }
-
-    /// <summary>The preview takes the height the page leaves; open look sliders take some of it, so nothing scrolls.</summary>
-    private void FitCompareCanvas(double windowHeight)
-    {
-        if (CompareCanvas == null || LookSliders == null) return;
-        CompareCanvas.Height = LookSliders.IsVisible
-            ? Math.Clamp(windowHeight - 590, 220, 1200)
-            : Math.Clamp(windowHeight - 480, 380, 1200);
     }
 
     // The last rendered frame: original and, with a look, the repaired frame without it.
@@ -1384,58 +1409,264 @@ public partial class MainWindow : Window
         Setting_Changed(null, new RoutedEventArgs());
     }
 
-    private void RefreshPresetChoices(string? select = null)
+    // ---- preset cards
+
+    // The preset the current values started from; it keeps an outline once they change.
+    private RepairPreset? _basePreset;
+    private bool _advancedOpen;
+    // The user preset being renamed or about to be deleted; null while saving a new one.
+    private RepairPreset? _renaming, _deleting;
+    private readonly List<(Button Card, Button? More, RepairPreset Preset)> _presetCards = [];
+
+    /// <summary>Built-in presets first, then the user's own in the order they were saved.</summary>
+    private IEnumerable<RepairPreset> AllPresets => RepairPreset.BuiltIn.Concat(_settings.Presets);
+
+    /// <summary>One card per preset. With Advanced open the cards shrink to their names.</summary>
+    private void RefreshPresetChoices()
     {
-        _applyingPreset = true;
-        PresetChoice.Items.Clear();
-        foreach (var preset in RepairPreset.BuiltIn)
-            PresetChoice.Items.Add(new ComboBoxItem { Content = preset.Name, Tag = preset });
-        foreach (var preset in _settings.Presets.OrderBy(preset => preset.Name))
-            PresetChoice.Items.Add(new ComboBoxItem { Content = preset.Name, Tag = preset });
-        PresetChoice.SelectedItem = PresetChoice.Items.OfType<ComboBoxItem>().FirstOrDefault(item => item.Content as string == select);
-        DeletePresetButton.IsEnabled = SelectedPreset() is { } chosen && !RepairPreset.BuiltIn.Contains(chosen);
-        _applyingPreset = false;
+        PresetGrid.Children.Clear();
+        _presetCards.Clear();
+        PresetGrid.Columns = _advancedOpen ? 3 : 2;
+        foreach (var preset in AllPresets)
+        {
+            var own = !preset.IsBuiltIn;
+            var text = new StackPanel { Spacing = 1, Margin = new Thickness(0, 0, own ? 18 : 0, 0) };
+            text.Children.Add(new TextBlock { Text = preset.Name, FontWeight = FontWeight.SemiBold, FontSize = _advancedOpen ? 12 : 13,
+                                              TextTrimming = TextTrimming.CharacterEllipsis });
+            if (!_advancedOpen)
+                text.Children.Add(new TextBlock { Text = own ? string.Format(RepairTexts.UserPresetLine, ShortDescription(preset)) : preset.Description,
+                                                  Classes = { "desc" }, TextTrimming = TextTrimming.CharacterEllipsis });
+            var card = new Button { Classes = { "preset" }, Content = text, Padding = _advancedOpen ? new Thickness(9, 5) : new Thickness(10, 6) };
+            ToolTip.SetTip(card, own ? $"{preset.Name}\n{RepairTexts.UserPresetTip}" : $"{preset.Name}\n{preset.Tip}");
+            AutomationProperties.SetName(card, preset.Name);
+            card.Click += (_, _) => ApplyPreset(preset);
+            var cell = new Grid();
+            cell.Children.Add(card);
+            Button? more = null;
+            if (own)
+            {
+                card.ContextFlyout = PresetMenu(preset);
+                more = new Button { Classes = { "more" }, Content = "…", HorizontalAlignment = HorizontalAlignment.Right,
+                                    VerticalAlignment = VerticalAlignment.Top, Margin = new Thickness(0, 2, 2, 0), Flyout = PresetMenu(preset) };
+                ToolTip.SetTip(more, string.Format(RepairTexts.MoreFor, preset.Name));
+                AutomationProperties.SetName(more, string.Format(RepairTexts.MoreFor, preset.Name));
+                cell.Children.Add(more);
+            }
+            PresetGrid.Children.Add(cell);
+            _presetCards.Add((card, more, preset));
+        }
+        UpdateCleanHint();
+        FitRepairColumnSoon();
     }
 
-    private RepairPreset? SelectedPreset() => (PresetChoice.SelectedItem as ComboBoxItem)?.Tag as RepairPreset;
-
-    private void Preset_Changed(object? sender, SelectionChangedEventArgs e)
+    /// <summary>The second line of a user preset card, e.g. "tape, 2×, best".</summary>
+    private static string ShortDescription(RepairPreset preset)
     {
-        if (_applyingPreset || PresetChoice == null) return;
-        if (SelectedPreset() is not { } preset) return;
-        ApplyRepair(preset);
-        DeletePresetButton.IsEnabled = !RepairPreset.BuiltIn.Contains(preset);
-        PresetStatus.IsVisible = true; PresetStatus.Text = $"Preset \"{preset.Name}\" applied.";
+        var parts = new List<string> { preset.Signal };
+        if (preset.Size != 100) parts.Add((preset.Size / 100.0).ToString("0.#", CultureInfo.InvariantCulture) + "×");
+        if (preset.Effort != "balanced") parts.Add(preset.Effort);
+        if (preset.Osd) parts.Add("date stamp");
+        if (preset.Look) parts.Add("look");
+        return string.Join(", ", parts);
+    }
+
+    private MenuFlyout PresetMenu(RepairPreset preset)
+    {
+        var rename = new MenuItem { Header = RepairTexts.RenameMenu };
+        rename.Click += (_, _) => StartNaming(preset);
+        var update = new MenuItem { Header = RepairTexts.UpdateMenu };
+        update.Click += (_, _) => UpdatePreset(preset);
+        var delete = new MenuItem { Header = RepairTexts.DeleteMenu };
+        delete.Click += (_, _) => StartDeleting(preset);
+        var menu = new MenuFlyout();
+        menu.Items.Add(rename); menu.Items.Add(update); menu.Items.Add(delete);
+        return menu;
+    }
+
+    /// <summary>
+    /// A built-in preset sets the repair, size and speed only: the look, the export
+    /// quality and the date stamp choice stay. A preset of the user's brings back
+    /// everything it was saved with.
+    /// </summary>
+    private void ApplyPreset(RepairPreset preset)
+    {
+        CloseNaming();
+        var values = preset.Clone();
+        if (preset.IsBuiltIn)
+        {
+            var current = CurrentRepair();
+            values.Osd = current.Osd; values.Quality = current.Quality; values.SizeCapMb = current.SizeCapMb;
+            values.Look = current.Look; values.LookGrade = current.LookGrade; values.LookGlow = current.LookGlow;
+            values.LookVignette = current.LookVignette; values.LookGrain = current.LookGrain; values.LookFringe = current.LookFringe;
+        }
+        _basePreset = preset;
+        ApplyRepair(values);
+        ShowPresetStatus("");
+    }
+
+    /// <summary>Lights the card that matches the current values, or outlines the one they started from.</summary>
+    private RepairPreset? UpdatePresetState()
+    {
+        if (PresetState == null || StabiliseSlider == null || QualityValue == null) return null;
+        var current = CurrentRepair();
+        var all = AllPresets.ToList();
+        if (_basePreset != null && !all.Contains(_basePreset)) _basePreset = null;
+        var match = _basePreset != null && _basePreset.SameRepair(current) ? _basePreset : all.FirstOrDefault(preset => preset.SameRepair(current));
+        if (match != null) _basePreset = match;
+        foreach (var (card, more, preset) in _presetCards)
+        {
+            card.Classes.Set("selected", preset == match);
+            card.Classes.Set("based", match == null && preset == _basePreset);
+            more?.Classes.Set("onaccent", preset == match);
+        }
+        PresetState.Text = match != null ? match.Name
+            : _basePreset != null ? string.Format(RepairTexts.CustomBasedOn, _basePreset.Name) : RepairTexts.CustomSettings;
+        ToolTip.SetTip(PresetState, PresetState.Text);
+        return match;
+    }
+
+    private void ShowPresetStatus(string text)
+    {
+        PresetStatus.Text = text;
+        ToolTip.SetTip(PresetStatus, string.IsNullOrEmpty(text) ? null : text);
+    }
+
+    private void SavePresetStart_Click(object? sender, RoutedEventArgs e) => StartNaming(null);
+
+    /// <summary>The name box below the cards: a new preset, or a new name for one of the user's.</summary>
+    private void StartNaming(RepairPreset? renaming)
+    {
+        _renaming = renaming;
+        _deleting = null;
+        PresetNameLabel.Text = renaming == null ? RepairTexts.SaveTitle : string.Format(RepairTexts.RenameTitle, renaming.Name);
+        PresetNameOk.Content = renaming == null ? RepairTexts.Save : RepairTexts.Rename;
+        PresetName.Text = renaming?.Name ?? "";
+        PresetNameError.IsVisible = false;
+        PresetActions.IsVisible = false; PresetDeletePanel.IsVisible = false; PresetNamePanel.IsVisible = true;
+        FitRepairColumnSoon();
+        Dispatcher.UIThread.Post(() => { PresetName.Focus(); PresetName.SelectAll(); }, DispatcherPriority.Background);
+    }
+
+    private void CloseNaming()
+    {
+        _renaming = _deleting = null;
+        PresetNamePanel.IsVisible = false; PresetDeletePanel.IsVisible = false; PresetActions.IsVisible = true;
+        FitRepairColumnSoon();
     }
 
     private void PresetName_KeyDown(object? sender, KeyEventArgs e)
     {
-        if (e.Key == Key.Enter) { SavePreset_Click(sender, e); e.Handled = true; }
+        if (e.Key == Key.Enter) { PresetNameOk_Click(sender, e); e.Handled = true; }
+        else if (e.Key == Key.Escape) { CloseNaming(); e.Handled = true; }
     }
 
-    private void SavePreset_Click(object? sender, RoutedEventArgs e)
+    private void PresetNameCancel_Click(object? sender, RoutedEventArgs e) => CloseNaming();
+
+    private void PresetNameOk_Click(object? sender, RoutedEventArgs e)
     {
         var name = PresetName.Text?.Trim() ?? "";
-        if (name.Length == 0) { PresetStatus.IsVisible = true; PresetStatus.Text = "Give the preset a name first."; return; }
-        if (RepairPreset.BuiltIn.Any(preset => preset.Name.Equals(name, StringComparison.OrdinalIgnoreCase)))
-        { PresetStatus.IsVisible = true; PresetStatus.Text = "That name belongs to a built-in preset. Choose another one."; return; }
-        var saved = CurrentRepair();
-        saved.Name = name;
-        _settings.Presets.RemoveAll(preset => preset.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
-        _settings.Presets.Add(saved);
+        var problem = name.Length == 0 ? RepairTexts.NameMissing
+            : RepairPreset.BuiltIn.Any(preset => preset.Name.Equals(name, StringComparison.OrdinalIgnoreCase)) ? RepairTexts.NameBuiltIn
+            : _settings.Presets.Any(preset => preset != _renaming && preset.Name.Equals(name, StringComparison.OrdinalIgnoreCase)) ? RepairTexts.NameTaken
+            : null;
+        if (problem != null)
+        {
+            PresetNameError.Text = problem; PresetNameError.IsVisible = true;
+            PresetName.Focus();
+            FitRepairColumnSoon();
+            return;
+        }
+        string status;
+        if (_renaming is { } renamed)
+        {
+            renamed.Name = name;
+            status = string.Format(RepairTexts.Renamed, name);
+        }
+        else
+        {
+            var saved = CurrentRepair();
+            saved.Name = name;
+            _settings.Presets.Add(saved);
+            _basePreset = saved;
+            status = string.Format(RepairTexts.Saved, name);
+        }
         _settings.Save();
-        RefreshPresetChoices(name);
-        PresetName.Text = "";
-        PresetStatus.IsVisible = true; PresetStatus.Text = $"Preset \"{name}\" saved.";
+        CloseNaming();
+        RefreshPresetChoices();
+        ShowPresetStatus(status);
     }
 
-    private void DeletePreset_Click(object? sender, RoutedEventArgs e)
+    /// <summary>The user's preset takes the current settings; it keeps its name and place.</summary>
+    private void UpdatePreset(RepairPreset preset)
     {
-        if (SelectedPreset() is not { } preset || RepairPreset.BuiltIn.Contains(preset)) return;
+        var index = _settings.Presets.IndexOf(preset);
+        if (index < 0) return;
+        var updated = CurrentRepair();
+        updated.Name = preset.Name;
+        _settings.Presets[index] = updated;
+        _basePreset = updated;
+        _settings.Save();
+        CloseNaming();
+        RefreshPresetChoices();
+        ShowPresetStatus(string.Format(RepairTexts.Updated, preset.Name));
+    }
+
+    private void StartDeleting(RepairPreset preset)
+    {
+        _deleting = preset;
+        _renaming = null;
+        PresetDeleteQuestion.Text = string.Format(RepairTexts.DeleteQuestion, preset.Name);
+        PresetActions.IsVisible = false; PresetNamePanel.IsVisible = false; PresetDeletePanel.IsVisible = true;
+        FitRepairColumnSoon();
+        Dispatcher.UIThread.Post(() => PresetDeleteOk.Focus(), DispatcherPriority.Background);
+    }
+
+    private void PresetDeleteCancel_Click(object? sender, RoutedEventArgs e) => CloseNaming();
+
+    private void PresetDeleteOk_Click(object? sender, RoutedEventArgs e)
+    {
+        if (_deleting is not { } preset || preset.IsBuiltIn) { CloseNaming(); return; }
         _settings.Presets.Remove(preset);
         _settings.Save();
+        CloseNaming();
         RefreshPresetChoices();
-        PresetStatus.IsVisible = true; PresetStatus.Text = $"Preset \"{preset.Name}\" deleted.";
+        ShowPresetStatus(string.Format(RepairTexts.Deleted, preset.Name));
+    }
+
+    // ---- advanced
+
+    private void AdvancedToggle_Click(object? sender, RoutedEventArgs e)
+    {
+        _advancedOpen = !_advancedOpen;
+        AdvancedScroller.IsVisible = _advancedOpen;
+        AdvancedCard.VerticalAlignment = _advancedOpen ? VerticalAlignment.Stretch : VerticalAlignment.Top;
+        AdvancedChevron.Text = _advancedOpen ? RepairTexts.AdvancedHide : RepairTexts.AdvancedShow;
+        ToolTip.SetTip(AdvancedToggle, _advancedOpen ? RepairTexts.AdvancedHideTip : RepairTexts.AdvancedShowTip);
+        RefreshPresetChoices();
+    }
+
+    private void RepairColumn_SizeChanged(object? sender, SizeChangedEventArgs e) => FitRepairColumnSoon();
+
+    private void FitRepairColumnSoon() => Dispatcher.UIThread.Post(FitRepairColumn, DispatcherPriority.Background);
+
+    /// <summary>
+    /// The preset cards get the height the rest of the column leaves; with Advanced
+    /// open the sliders come first and the cards keep at least one row. Whatever does
+    /// not fit scrolls inside its own box, never the page.
+    /// </summary>
+    private void FitRepairColumn()
+    {
+        if (RepairColumn == null || RepairColumn.Bounds.Height <= 0 || !CleanPage.IsVisible) return;
+        var spacing = RepairColumn.RowSpacing * 2;
+        var chrome = PresetCard.Bounds.Height - PresetScroller.Bounds.Height;
+        var advanced = _advancedOpen
+            ? AdvancedToggle.Bounds.Height + AdvancedBody.DesiredSize.Height + AdvancedCard.Padding.Top + AdvancedCard.Padding.Bottom + 2
+            : AdvancedCard.Bounds.Height;
+        var room = RepairColumn.Bounds.Height - SummaryCard.Bounds.Height - advanced - spacing - chrome;
+        var row = _presetCards.Count > 0 ? _presetCards[0].Card.Bounds.Height + PresetGrid.RowSpacing : 40;
+        var least = _advancedOpen ? row : row * 2;
+        var fitted = Math.Floor(Math.Max(least, room));
+        if (Math.Abs(PresetScroller.MaxHeight - fitted) > 0.5) PresetScroller.MaxHeight = fitted;
     }
 
     private object BuildRecipe(FootageItem clip) => new
@@ -1505,10 +1736,11 @@ public partial class MainWindow : Window
 
     private async void DetectStamp_Click(object? sender, RoutedEventArgs e)
     {
-        if (_selected == null) { StampStatus.Text = "Add and select a clip first."; return; }
+        if (_selected == null) { StampStatus.IsVisible = true; StampStatus.Text = "Add and select a clip first."; return; }
         var clip = _selected;
         var target = TempFile("stamp");
         DetectStampButton.IsEnabled = false;
+        StampStatus.IsVisible = true;
         StampStatus.Text = $"Looking for a date stamp in {clip}…";
         ShowBusy("Looking for the date stamp", $"Scanning {clip} for burned-in text that holds still while the picture moves.");
         try

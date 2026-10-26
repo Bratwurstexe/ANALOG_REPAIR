@@ -20,6 +20,10 @@ Repair digitised tapes and film on your own computer: VHS, S-VHS, Hi8, Video8 an
 
 `SHA256SUMS.txt` lists the checksum of every package.
 
+## New in 0.2.0
+
+- **A simpler Repair page that fits on one screen:** start from a preset card (*VHS tape*, *Worn VHS tape*, *Camcorder tape*, *8 mm / Super 8*, *16 mm film*, *Archive, 2× Best*), pick the output size and speed, and find every slider, the source and the date stamp under *Advanced*, folded away by default. Changed values show as *Custom · based on …*; *Save as preset…* keeps them under your own name, and your presets can be renamed, updated or deleted. Presets saved with 0.1.0 appear as your own. Slimmer sliders throughout the app.
+
 ## 0.1.0: the first release
 
 **Tape or film**

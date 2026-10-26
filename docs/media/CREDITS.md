@@ -10,7 +10,9 @@ The labels ORIGINAL and REPAIRED, the marked area and its enlargement were added
 | `vhs-atlanta-1999-before-after.jpg` | *Interstate 75 North – Atlanta, Georgia (1999; VHS)*, Wikimedia Commons, https://commons.wikimedia.org/wiki/File:Interstate_75_North_-_Atlanta,_Georgia_(1999;_VHS).webm | uPiNtHemTNs | [CC BY 3.0](https://creativecommons.org/licenses/by/3.0/) |
 
 The stills derived from the VHS clip are shared under the same CC BY 3.0
-licence, with the attribution above.
+licence, with the attribution above. This includes the app screenshots
+`ui-import.png`, `ui-trim.png`, `ui-repair.png` and `ui-export.png`, which show
+the VHS clip in the trim preview, the filmstrip and the repair comparison.
 
 `logo.svg` and `pipeline.svg` were drawn for this project and are covered by
 the project's MIT licence.

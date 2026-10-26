@@ -33,22 +33,48 @@ public sealed class RepairPreset
 
     public RepairPreset Clone() => (RepairPreset)MemberwiseClone();
 
+    /// <summary>One plain line on the preset card; built-in presets only.</summary>
+    [JsonIgnore] public string Description { get; init; } = "";
+    /// <summary>The longer explanation in the card's tooltip; built-in presets only.</summary>
+    [JsonIgnore] public string Tip { get; init; } = "";
+    [JsonIgnore] public bool IsBuiltIn => BuiltIn.Contains(this);
+
     /// <summary>
-    /// Presets that ship with the app; they cannot be deleted. The first one of
-    /// each source is what choosing that source on the Repair page starts from.
+    /// True when the repair itself is the same: source, every repair slider, size
+    /// and speed. The date stamp, the look and the export quality are not compared;
+    /// they belong to the footage or are a finish on top, and they stay as they are
+    /// when a built-in preset is chosen.
+    /// </summary>
+    public bool SameRepair(RepairPreset other) =>
+        Signal == other.Signal && Colour == other.Colour && Noise == other.Noise && Detail == other.Detail
+        && Size == other.Size && Effort == other.Effort && Stabilise == other.Stabilise
+        && Flicker == other.Flicker && Dust == other.Dust && Tape == other.Tape && KeepGrain == other.KeepGrain;
+
+    /// <summary>
+    /// Presets that ship with the app; they cannot be renamed or deleted. The first
+    /// one of each source is what choosing that source by hand starts from. Names,
+    /// descriptions and tips are the texts of the cards on the Repair page.
     /// </summary>
     public static IReadOnlyList<RepairPreset> BuiltIn { get; } =
     [
-        new() { Name = "VHS or camcorder tape", Signal = "tape", Colour = 40, Noise = 50, Detail = 10,
-                Stabilise = 30, Flicker = 30, Dust = 30, Tape = 60 },
-        new() { Name = "8 mm or 16 mm film", Signal = "film", Colour = 0, Noise = 30, Detail = 10,
-                Stabilise = 50, Flicker = 60, Dust = 60, Tape = 0, KeepGrain = true },
-        new() { Name = "Tape, repaired and upscaled 2x", Signal = "tape", Colour = 40, Noise = 50, Detail = 10,
-                Stabilise = 30, Flicker = 30, Dust = 30, Tape = 60, Size = 200, Effort = "best" },
-        new() { Name = "Film, repaired and upscaled 2x", Signal = "film", Colour = 0, Noise = 30, Detail = 10,
-                Stabilise = 50, Flicker = 60, Dust = 60, Tape = 0, KeepGrain = true, Size = 200, Effort = "best" },
-        new() { Name = "Quick look (fast)", Signal = "tape", Colour = 30, Noise = 0, Detail = 0,
-                Stabilise = 0, Flicker = 0, Dust = 0, Tape = 40, Effort = "fast", Quality = 22 },
+        new() { Name = "VHS tape", Description = "Everyday tape: noise and colour",
+                Tip = "VHS or S-VHS in fair shape: calms the noise, pulls smeared colour back onto the edges and repairs tracking noise.",
+                Signal = "tape", Colour = 40, Noise = 50, Detail = 10, Stabilise = 30, Flicker = 30, Dust = 30, Tape = 60 },
+        new() { Name = "Worn VHS tape", Description = "Heavy tracking noise, dropouts",
+                Tip = "Tapes that were played often or stored badly: strong repair of tracking noise and the torn bottom band, dropouts refilled, more colour and noise repair.",
+                Signal = "tape", Colour = 60, Noise = 65, Detail = 10, Stabilise = 30, Flicker = 40, Dust = 70, Tape = 90 },
+        new() { Name = "Camcorder tape", Description = "Hi8, Video8: steadies the shake",
+                Tip = "Hand-held Hi8, Video8 or VHS-C recordings: steadies the shake and calms the noise; tape noise is usually milder than on VHS.",
+                Signal = "tape", Colour = 50, Noise = 50, Detail = 15, Stabilise = 55, Flicker = 30, Dust = 30, Tape = 45 },
+        new() { Name = "8 mm / Super 8", Description = "Film: dust, flicker, gate weave",
+                Tip = "Home movie film: removes dust and scratches, evens out flicker and steadies the gate weave. Keeps a little grain so the film does not look waxy.",
+                Signal = "film", Colour = 0, Noise = 30, Detail = 10, Stabilise = 50, Flicker = 60, Dust = 60, Tape = 0, KeepGrain = true },
+        new() { Name = "16 mm film", Description = "Finer film, a lighter touch",
+                Tip = "16 mm has finer grain and a steadier gate than 8 mm: the same repairs, applied more gently.",
+                Signal = "film", Colour = 0, Noise = 20, Detail = 10, Stabilise = 30, Flicker = 40, Dust = 50, Tape = 0, KeepGrain = true },
+        new() { Name = "Archive, 2× Best", Description = "VHS repair, upscaled 2× · slow",
+                Tip = "The VHS tape repair at the Best speed, upscaled to twice the size with detail from the neighbouring frames. Takes the longest; for the copy you keep.",
+                Signal = "tape", Colour = 40, Noise = 50, Detail = 15, Stabilise = 30, Flicker = 30, Dust = 30, Tape = 60, Size = 200, Effort = "best" },
     ];
 }
 
@@ -75,6 +101,7 @@ public sealed class UserSettings
     [JsonPropertyName("joinClips")] public bool JoinClips { get; set; }
     [JsonPropertyName("snap")] public bool Snap { get; set; } = true;
     [JsonPropertyName("lastRepair")] public RepairPreset? LastRepair { get; set; }
+    // The user's own presets; those saved by 0.1.0 load here unchanged.
     [JsonPropertyName("presets")] public List<RepairPreset> Presets { get; set; } = [];
     [JsonPropertyName("clips")] public Dictionary<string, ClipMemory> Clips { get; set; } = new();
 

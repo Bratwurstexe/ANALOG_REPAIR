@@ -27,7 +27,7 @@ Repairs VHS, S-VHS, Hi8, Video8 and camcorder tapes and 8 mm, Super 8 or 16 mm f
 
 <hr>
 
-<p align="center"><a href="#features"><b>Features</b></a>&ensp;·&ensp;<a href="#before-and-after"><b>Before / after</b></a>&ensp;·&ensp;<a href="#how-it-works"><b>How it works</b></a>&ensp;·&ensp;<a href="#the-workflow"><b>Workflow</b></a>&ensp;·&ensp;<a href="#getting-started"><b>Getting started</b></a>&ensp;·&ensp;<a href="#coming-soon"><b>Coming soon</b></a>&ensp;·&ensp;<a href="#licence"><b>Licence</b></a></p>
+<p align="center"><a href="#features"><b>Features</b></a>&ensp;·&ensp;<a href="#before-and-after"><b>Before / after</b></a>&ensp;·&ensp;<a href="#the-app"><b>The app</b></a>&ensp;·&ensp;<a href="#how-it-works"><b>How it works</b></a>&ensp;·&ensp;<a href="#the-workflow"><b>Workflow</b></a>&ensp;·&ensp;<a href="#getting-started"><b>Getting started</b></a>&ensp;·&ensp;<a href="#coming-soon"><b>Coming soon</b></a>&ensp;·&ensp;<a href="#licence"><b>Licence</b></a></p>
 
 <hr>
 
@@ -39,7 +39,7 @@ For drone footage, see the sister project [FPV DVR Cleaner](https://github.com/B
 
 ## Features
 
-- **Tape or film, one click.** Choose the source on the *Repair* page: *Tape* (VHS, Hi8, camcorder) or *Film* (8 mm, Super 8, 16 mm). Each starts from settings made for it, and every repair keeps its own slider.
+- **Start from a preset.** The *Repair* page opens with presets for your footage: *VHS tape*, *Worn VHS tape*, *Camcorder tape*, *8 mm / Super 8*, *16 mm film* and *Archive, 2× Best*. Every repair keeps its own slider under *Advanced*, folded away until you need it.
 - **Tape noise repaired.** Rows torn by tracking noise are rebuilt from the frames around them, the torn band at the bottom of a VHS picture (the head switch) is masked, and lines that wobble sideways are put back in place.
 - **Dust and scratches removed.** Specks of dirt, tape dropouts and thin vertical scratches are refilled from the neighbouring frames.
 - **Flicker evened out, shake steadied.** Brightness that jumps from frame to frame is matched to its neighbours; slow changes of exposure stay. Gate weave and a shaky hand are smoothed; pans and zooms stay.
@@ -54,7 +54,7 @@ For drone footage, see the sister project [FPV DVR Cleaner](https://github.com/B
 - **Watch the result live.** After the export, original and repaired clip play side by side (or under a wipe you drag), frame-accurate to each other. A measurement tells you how much was gained and how much is still possible; *Auto refine* picks the settings from it and exports again with one click.
 - **Pick the file format.** MP4 with H.264 plays everywhere, MP4 with H.265 gives the smallest files, MOV with ProRes 422 is made for video editors, MKV is a robust container, and WebM with VP9 and Opus is for the web.
 - **Batch export.** Every clip keeps its own cut. The remaining time is shown live, you can cancel at any moment, and the original sound is kept. Clips can be joined into one video.
-- **Presets and memory.** Save your settings as presets. The last settings, the export folder and the cut of every recording come back the next time you start the app.
+- **Your own presets and memory.** Save your settings as a preset with a name; rename, update or delete it later. The last settings, the export folder and the cut of every recording come back the next time you start the app.
 - **Private.** No account, no upload, no telemetry. Everything runs locally.
 
 ## Before and after
@@ -65,13 +65,24 @@ Each image shows the whole picture, original on the left and repaired on the rig
 
 ![A panorama of the New York waterfront from the tower of the Brooklyn Bridge, 1899: left the original with dust and specks, right repaired](docs/media/film-brooklyn-1899-before-after.jpg)
 
-<sub>*Panorama from the tower of Brooklyn Bridge* (American Mutoscope and Biograph Company, 1899), [Library of Congress](https://www.loc.gov/item/00694390), public domain. Repaired with the *8 mm or 16 mm film* settings.</sub>
+<sub>*Panorama from the tower of Brooklyn Bridge* (American Mutoscope and Biograph Company, 1899), [Library of Congress](https://www.loc.gov/item/00694390), public domain. Repaired with the *8 mm / Super 8* preset.</sub>
 
 **Tape:** a night drive from a VHS camcorder tape, with a tracking-noise band at the bottom.
 
 ![A night drive on a highway from a VHS tape: left the original with a band of tracking noise, right repaired](docs/media/vhs-atlanta-1999-before-after.jpg)
 
-<sub>*Interstate 75 North – Atlanta, Georgia (1999; VHS)* by uPiNtHemTNs, [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Interstate_75_North_-_Atlanta,_Georgia_(1999;_VHS).webm), licensed [CC BY 3.0](https://creativecommons.org/licenses/by/3.0/). Shown as stills before and after the repair; the labels were added. Repaired with the *VHS or camcorder tape* settings.</sub>
+<sub>*Interstate 75 North – Atlanta, Georgia (1999; VHS)* by uPiNtHemTNs, [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Interstate_75_North_-_Atlanta,_Georgia_(1999;_VHS).webm), licensed [CC BY 3.0](https://creativecommons.org/licenses/by/3.0/). Shown as stills before and after the repair; the labels were added. Repaired with the *VHS tape* preset.</sub>
+
+## The app
+
+Four steps on the left, one screen each, and every page fits the window.
+
+| | |
+|---|---|
+| ![The Import page: a drop zone for tape and film transfers and the queue with two clips](docs/media/ui-import.png) | ![The Trim page: a large preview of the VHS night drive, transport buttons and the filmstrip timeline](docs/media/ui-trim.png) |
+| **Import:** drop transfers or add a folder. | **Trim:** split, remove parts, fine-tune the edges. |
+| ![The Repair page: preset cards, output size and speed, the folded Advanced section, and a rendered frame with the split comparison](docs/media/ui-repair.png) | ![The Export page: destination folder, file format, quality and the export button](docs/media/ui-export.png) |
+| **Repair:** pick a preset, check a real frame; *Advanced* holds every slider. | **Export:** choose folder and format, then render the queue. |
 
 ## How it works
 
@@ -106,7 +117,7 @@ The output is H.264 MP4 with the original sound unless you pick another format: 
 
 1. **Import:** drop transfers onto the window or add a folder. Tapes and film usually come as .mpg, .vob, .dv, .avi, .m2ts, .mts, .mov, .mkv, .webm or .mp4.
 2. **Trim:** split the recording at the playhead (`S`), click the parts you don't want and press `Delete`; the kept parts close up. Drag the `[` `]` edges to fine-tune, set bookmarks with `B`, play through the kept parts with `Space`.
-3. **Repair:** choose *Tape* or *Film* (or a preset), adjust the sliders, tick *Remove date stamp* if there is one, pick the output size, speed and, if you like, a look, then press *Render this frame* to check the result.
+3. **Repair:** pick the preset that fits your footage, then the output size and speed and, if you like, a look, and press *Render this frame* to check the result. *Advanced* shows the source (*Tape* or *Film*), every repair slider, *Remove date stamp* and *Detail*; changed values show as *Custom*, and *Save as preset…* keeps them under a name of your own.
 4. **Export:** choose a folder and a file format, then start. Afterwards, play original and result side by side, read the gain and headroom estimate, and press *Auto refine* to export again with settings chosen from it.
 
 ## Getting started
