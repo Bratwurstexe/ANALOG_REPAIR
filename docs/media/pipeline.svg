@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 460" width="1200" height="460" font-family="Inter, Segoe UI, Helvetica, Arial, sans-serif" role="img" aria-label="How a clip is processed: deinterlacing, tape noise, date stamp, flicker, dust and scratches, stabilising, colour, noise reduction and upscaling, look, output">
+  <rect x="0" y="0" width="1200" height="460" rx="18" fill="#F7F6F2"/>
+  <text x="40" y="52" font-size="22" font-weight="700" fill="#20252B">How a clip is processed</text>
+  <text x="40" y="78" font-size="14" fill="#5F676D">Every stage compares a frame with its motion-aligned neighbours and changes only what stands out against them. A stage at 0 is skipped.</text>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#9A4100"/>
+    </marker>
+  </defs>
+  <g font-size="14">
+    <rect x="40" y="110" width="130" height="82" rx="12" fill="#22282E"/>
+    <text x="105" y="144" text-anchor="middle" fill="#FFFFFF" font-weight="700">Transfer</text>
+    <text x="105" y="164" text-anchor="middle" fill="#C7CDD2" font-size="12">.mpg .dv .avi .mp4</text>
+    <text x="105" y="180" text-anchor="middle" fill="#C7CDD2" font-size="12">cut in Trim</text>
+    <line x1="172" y1="151" x2="192" y2="151" stroke="#9A4100" stroke-width="2.5" marker-end="url(#arrow)"/>
+    <rect x="196" y="110" width="168" height="82" rx="12" fill="#FFFFFF" stroke="#E0B08A" stroke-width="2"/>
+    <text x="280" y="136" text-anchor="middle" fill="#9A4100" font-weight="700" font-size="11">1 · TAPE</text>
+    <text x="280" y="158" text-anchor="middle" fill="#20252B" font-weight="700">Deinterlacing</text>
+    <text x="280" y="177" text-anchor="middle" fill="#5F676D" font-size="12">fields to frames</text>
+    <line x1="366" y1="151" x2="388" y2="151" stroke="#9A4100" stroke-width="2.5" marker-end="url(#arrow)"/>
+    <rect x="392" y="110" width="168" height="82" rx="12" fill="#FFFFFF" stroke="#E0B08A" stroke-width="2"/>
+    <text x="476" y="136" text-anchor="middle" fill="#9A4100" font-weight="700" font-size="11">2 · TAPE</text>
+    <text x="476" y="158" text-anchor="middle" fill="#20252B" font-weight="700">Tape noise</text>
+    <text x="476" y="177" text-anchor="middle" fill="#5F676D" font-size="12">tracking, head switch</text>
+    <line x1="562" y1="151" x2="584" y2="151" stroke="#9A4100" stroke-width="2.5" marker-end="url(#arrow)"/>
+    <rect x="588" y="110" width="168" height="82" rx="12" fill="#FFFFFF" stroke="#E0B08A" stroke-width="2"/>
+    <text x="672" y="136" text-anchor="middle" fill="#9A4100" font-weight="700" font-size="11">3 · OPTIONAL</text>
+    <text x="672" y="158" text-anchor="middle" fill="#20252B" font-weight="700">Date stamp</text>
+    <text x="672" y="177" text-anchor="middle" fill="#5F676D" font-size="12">find &amp; refill</text>
+    <line x1="758" y1="151" x2="780" y2="151" stroke="#9A4100" stroke-width="2.5" marker-end="url(#arrow)"/>
+    <rect x="784" y="110" width="168" height="82" rx="12" fill="#FFFFFF" stroke="#E0B08A" stroke-width="2"/>
+    <text x="868" y="136" text-anchor="middle" fill="#9A4100" font-weight="700" font-size="11">4 · FILM</text>
+    <text x="868" y="158" text-anchor="middle" fill="#20252B" font-weight="700">Flicker</text>
+    <text x="868" y="177" text-anchor="middle" fill="#5F676D" font-size="12">steady brightness</text>
+    <line x1="954" y1="151" x2="976" y2="151" stroke="#9A4100" stroke-width="2.5" marker-end="url(#arrow)"/>
+    <rect x="980" y="110" width="168" height="82" rx="12" fill="#FFFFFF" stroke="#E0B08A" stroke-width="2"/>
+    <text x="1064" y="136" text-anchor="middle" fill="#9A4100" font-weight="700" font-size="11">5 · FILM AND TAPE</text>
+    <text x="1064" y="158" text-anchor="middle" fill="#20252B" font-weight="700">Dust &amp; scratches</text>
+    <text x="1064" y="177" text-anchor="middle" fill="#5F676D" font-size="12">specks, dropouts, lines</text>
+    <path d="M1064 194 V210 H124 V232" fill="none" stroke="#9A4100" stroke-width="2.5" marker-end="url(#arrow)"/>
+    <rect x="40" y="236" width="168" height="82" rx="12" fill="#FFFFFF" stroke="#E0B08A" stroke-width="2"/>
+    <text x="124" y="262" text-anchor="middle" fill="#9A4100" font-weight="700" font-size="11">6 · FILM AND TAPE</text>
+    <text x="124" y="284" text-anchor="middle" fill="#20252B" font-weight="700">Stabilise</text>
+    <text x="124" y="303" text-anchor="middle" fill="#5F676D" font-size="12">weave and shake</text>
+    <line x1="210" y1="277" x2="232" y2="277" stroke="#9A4100" stroke-width="2.5" marker-end="url(#arrow)"/>
+    <rect x="236" y="236" width="168" height="82" rx="12" fill="#FFFFFF" stroke="#E0B08A" stroke-width="2"/>
+    <text x="320" y="262" text-anchor="middle" fill="#9A4100" font-weight="700" font-size="11">7 · IN COLOUR</text>
+    <text x="320" y="284" text-anchor="middle" fill="#20252B" font-weight="700">Colour</text>
+    <text x="320" y="303" text-anchor="middle" fill="#5F676D" font-size="12">noise and smear</text>
+    <line x1="406" y1="277" x2="428" y2="277" stroke="#9A4100" stroke-width="2.5" marker-end="url(#arrow)"/>
+    <rect x="432" y="236" width="168" height="82" rx="12" fill="#FFFFFF" stroke="#C9CDCB" stroke-width="2" stroke-dasharray="6 5"/>
+    <text x="516" y="262" text-anchor="middle" fill="#7D858A" font-weight="700" font-size="11">COMING SOON</text>
+    <text x="516" y="284" text-anchor="middle" fill="#5F676D" font-weight="700">Colourise</text>
+    <text x="516" y="303" text-anchor="middle" fill="#7D858A" font-size="12">black and white, from hints</text>
+    <line x1="602" y1="277" x2="624" y2="277" stroke="#9A4100" stroke-width="2.5" marker-end="url(#arrow)"/>
+    <rect x="628" y="236" width="168" height="82" rx="12" fill="#FFFFFF" stroke="#E0B08A" stroke-width="2"/>
+    <text x="712" y="262" text-anchor="middle" fill="#9A4100" font-weight="700" font-size="11">8 · FUSION</text>
+    <text x="712" y="284" text-anchor="middle" fill="#20252B" font-weight="700">Noise &amp; size</text>
+    <text x="712" y="303" text-anchor="middle" fill="#5F676D" font-size="12">denoise · 1.5× / 2×</text>
+    <line x1="798" y1="277" x2="820" y2="277" stroke="#9A4100" stroke-width="2.5" marker-end="url(#arrow)"/>
+    <rect x="824" y="236" width="168" height="82" rx="12" fill="#FFFFFF" stroke="#E0B08A" stroke-width="2"/>
+    <text x="908" y="262" text-anchor="middle" fill="#9A4100" font-weight="700" font-size="11">9 · OPTIONAL</text>
+    <text x="908" y="284" text-anchor="middle" fill="#20252B" font-weight="700">Look</text>
+    <text x="908" y="303" text-anchor="middle" fill="#5F676D" font-size="12">grade, grain, vignette</text>
+    <line x1="994" y1="277" x2="1016" y2="277" stroke="#9A4100" stroke-width="2.5" marker-end="url(#arrow)"/>
+    <rect x="1020" y="236" width="140" height="82" rx="12" fill="#A64600"/>
+    <text x="1090" y="270" text-anchor="middle" fill="#FFFFFF" font-weight="700">Output file</text>
+    <text x="1090" y="290" text-anchor="middle" fill="#FFE6D3" font-size="12">MP4 · MOV · MKV</text>
+    <text x="1090" y="306" text-anchor="middle" fill="#FFE6D3" font-size="12">WebM · original sound</text>
+  </g>
+  <!-- engine / app split -->
+  <rect x="40" y="362" width="1120" height="70" rx="12" fill="#EDEDE8"/>
+  <text x="62" y="392" font-size="13" font-weight="700" fill="#20252B">Desktop app (.NET 8 · Avalonia)</text>
+  <text x="62" y="414" font-size="12" fill="#5F676D">Import · filmstrip trim editor · settings · frame preview · queue · result player</text>
+  <text x="560" y="403" font-size="20" fill="#9A4100" text-anchor="middle">⇄</text>
+  <text x="610" y="392" font-size="13" font-weight="700" fill="#20252B">Video engine (Python · NumPy · OpenCV · FFmpeg)</text>
+  <text x="610" y="414" font-size="12" fill="#5F676D">JSON requests in, progress lines out; all processing stays on your computer</text>
+</svg>

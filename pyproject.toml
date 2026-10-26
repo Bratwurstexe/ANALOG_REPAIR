@@ -1,0 +1,18 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "analog-repair"
+version = "0.1.0"
+description = "Video engine for restoring digitised VHS, Hi8 and camcorder tapes and 8 mm, Super 8 or 16 mm film"
+readme = "README.md"
+requires-python = ">=3.10"
+license = {file = "LICENSE"}
+dependencies = ["numpy>=2,<3", "opencv-python-headless>=4.10,<6"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+analogrepair = ["assets/*.ttf", "assets/*.txt"]

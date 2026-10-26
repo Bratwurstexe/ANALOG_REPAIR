@@ -1,0 +1,30 @@
+Analog Repair
+=============
+
+Everything needed is in this folder: the app, the video engine and FFmpeg.
+Nothing else has to be installed.
+
+Start
+-----
+Windows : double-click AnalogRepair.Desktop.exe
+          (SmartScreen may ask once: "More info" -> "Run anyway")
+Linux   : AppImage: chmod +x Analog-Repair-*.AppImage, then start it
+          tar.gz:   ./AnalogRepair.Desktop
+macOS   : open "Analog Repair.app"
+          The app is not notarised. The first time, right-click it and choose
+          "Open", or run:  xattr -cr "Analog Repair.app"
+
+Use
+---
+1 Import  - drop your digitised tapes or film into the window
+2 Trim    - split at the playhead (S), click a part, Delete removes it;
+            drag the [ ] edges to trim, Space plays the kept parts
+3 Repair  - choose Tape or Film, adjust the sliders, tick "Remove date
+            stamp" if needed, "Render this frame" to check
+4 Export  - choose a folder and start; remaining time is shown live.
+            Afterwards: original and result side by side, plus an estimate
+            of what was gained and what is still possible without loss.
+            (folder, settings and cuts are remembered for next time)
+
+Help and source code: https://github.com/Bratwurstexe/ANALOG_REPAIR
+Licences of the included components: THIRD-PARTY-NOTICES.md and ffmpeg/FFMPEG-LICENSE.txt

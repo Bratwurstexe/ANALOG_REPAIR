@@ -1,0 +1,464 @@
+<Window xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="using:AnalogRepair.Desktop"
+        x:Class="AnalogRepair.Desktop.MainWindow" Title="Analog Repair"
+        Icon="avares://AnalogRepair.Desktop/Assets/app.png" Width="1320" Height="880" MinWidth="1080" MinHeight="700"
+        Background="#F3F3F0" WindowStartupLocation="CenterScreen" KeyDown="Window_KeyDown" SizeChanged="Window_SizeChanged">
+  <Window.Styles>
+    <Style Selector="TextBlock.eyebrow"><Setter Property="FontSize" Value="11"/><Setter Property="FontWeight" Value="Bold"/><Setter Property="Foreground" Value="#9A4100"/><Setter Property="LetterSpacing" Value="0.6"/></Style>
+    <Style Selector="TextBlock.heading"><Setter Property="FontSize" Value="20"/><Setter Property="FontWeight" Value="SemiBold"/><Setter Property="Foreground" Value="#20252B"/></Style>
+    <Style Selector="TextBlock.note"><Setter Property="Foreground" Value="#5F676D"/><Setter Property="TextWrapping" Value="Wrap"/></Style>
+    <Style Selector="TextBlock.label"><Setter Property="FontSize" Value="11"/><Setter Property="FontWeight" Value="SemiBold"/><Setter Property="Foreground" Value="#4E565C"/></Style>
+    <Style Selector="Border.card"><Setter Property="Background" Value="White"/><Setter Property="CornerRadius" Value="14"/><Setter Property="Padding" Value="22"/><Setter Property="BorderBrush" Value="#E3E4E0"/><Setter Property="BorderThickness" Value="1"/></Style>
+
+    <Style Selector="Button"><Setter Property="Background" Value="#E8E9E6"/><Setter Property="Foreground" Value="#20252B"/><Setter Property="Padding" Value="12,6"/><Setter Property="CornerRadius" Value="8"/><Setter Property="FontSize" Value="13"/></Style>
+    <!-- Fluent paints hover and pressed states on the template part, so every
+         state is set there too; otherwise it would fall back to grey on white. -->
+    <Style Selector="Button:pointerover /template/ ContentPresenter#PART_ContentPresenter"><Setter Property="Background" Value="#DADCD8"/><Setter Property="Foreground" Value="#20252B"/></Style>
+    <Style Selector="Button:pressed /template/ ContentPresenter#PART_ContentPresenter"><Setter Property="Background" Value="#CBCECA"/><Setter Property="Foreground" Value="#20252B"/></Style>
+    <Style Selector="Button:disabled /template/ ContentPresenter#PART_ContentPresenter"><Setter Property="Background" Value="#EEEFEC"/><Setter Property="Foreground" Value="#7D858A"/></Style>
+    <Style Selector="Button.accent"><Setter Property="Background" Value="#A64600"/><Setter Property="Foreground" Value="White"/><Setter Property="FontWeight" Value="SemiBold"/></Style>
+    <Style Selector="Button.accent:pointerover /template/ ContentPresenter#PART_ContentPresenter"><Setter Property="Background" Value="#8C3B00"/><Setter Property="Foreground" Value="White"/></Style>
+    <Style Selector="Button.accent:pressed /template/ ContentPresenter#PART_ContentPresenter"><Setter Property="Background" Value="#6F2F00"/><Setter Property="Foreground" Value="White"/></Style>
+    <Style Selector="Button.accent:disabled /template/ ContentPresenter#PART_ContentPresenter"><Setter Property="Background" Value="#E3C9B6"/><Setter Property="Foreground" Value="#5E4A3C"/></Style>
+    <Style Selector="Button.dark"><Setter Property="Background" Value="#3A424A"/><Setter Property="Foreground" Value="White"/><Setter Property="Padding" Value="10,5"/></Style>
+    <Style Selector="Button.dark:pointerover /template/ ContentPresenter#PART_ContentPresenter"><Setter Property="Background" Value="#4B545D"/><Setter Property="Foreground" Value="White"/></Style>
+    <Style Selector="Button.dark:pressed /template/ ContentPresenter#PART_ContentPresenter"><Setter Property="Background" Value="#5A646E"/><Setter Property="Foreground" Value="White"/></Style>
+    <Style Selector="Button.dark:disabled /template/ ContentPresenter#PART_ContentPresenter"><Setter Property="Background" Value="#30373E"/><Setter Property="Foreground" Value="#7E878F"/></Style>
+    <Style Selector="Button.step"><Setter Property="Background" Value="Transparent"/><Setter Property="Foreground" Value="#D3D8DC"/><Setter Property="HorizontalAlignment" Value="Stretch"/><Setter Property="HorizontalContentAlignment" Value="Left"/><Setter Property="Padding" Value="14,12"/><Setter Property="Margin" Value="0,3"/></Style>
+    <Style Selector="Button.step:pointerover /template/ ContentPresenter#PART_ContentPresenter"><Setter Property="Background" Value="#353C43"/><Setter Property="Foreground" Value="White"/></Style>
+    <Style Selector="Button.step:pressed /template/ ContentPresenter#PART_ContentPresenter"><Setter Property="Background" Value="#4A535C"/><Setter Property="Foreground" Value="White"/></Style>
+    <Style Selector="Button.step.current /template/ ContentPresenter#PART_ContentPresenter"><Setter Property="Background" Value="#424B54"/><Setter Property="Foreground" Value="White"/></Style>
+    <Style Selector="Button.step.current:pointerover /template/ ContentPresenter#PART_ContentPresenter"><Setter Property="Background" Value="#4B555E"/><Setter Property="Foreground" Value="White"/></Style>
+    <Style Selector="Button.row"><Setter Property="Background" Value="Transparent"/><Setter Property="HorizontalAlignment" Value="Stretch"/><Setter Property="HorizontalContentAlignment" Value="Left"/></Style>
+    <Style Selector="Button.remove"><Setter Property="Background" Value="Transparent"/><Setter Property="Foreground" Value="#9C3F1F"/><Setter Property="FontWeight" Value="Bold"/></Style>
+    <Style Selector="Button.remove:pointerover /template/ ContentPresenter#PART_ContentPresenter"><Setter Property="Background" Value="#F6DED4"/><Setter Property="Foreground" Value="#7A2E14"/></Style>
+
+    <Style Selector="RadioButton.segment">
+      <Setter Property="Foreground" Value="#20252B"/>
+      <Setter Property="Background" Value="#ECEDEA"/>
+      <Setter Property="Template">
+        <ControlTemplate>
+          <Border x:Name="Pill" Background="{TemplateBinding Background}" CornerRadius="8" Padding="12,6" Margin="0,0,6,0">
+            <ContentPresenter Content="{TemplateBinding Content}" Foreground="{TemplateBinding Foreground}" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+          </Border>
+        </ControlTemplate>
+      </Setter>
+    </Style>
+    <Style Selector="RadioButton.segment:pointerover"><Setter Property="Background" Value="#DFE1DD"/></Style>
+    <Style Selector="RadioButton.segment:checked"><Setter Property="Background" Value="#A64600"/><Setter Property="Foreground" Value="White"/></Style>
+    <Style Selector="RadioButton.segment:checked:pointerover"><Setter Property="Background" Value="#8C3B00"/></Style>
+    <!-- Small rounded chips, e.g. the look presets; none is checked for custom values. -->
+    <Style Selector="RadioButton.chip">
+      <Setter Property="Foreground" Value="#20252B"/>
+      <Setter Property="Background" Value="#ECEDEA"/>
+      <Setter Property="FontSize" Value="12"/>
+      <Setter Property="Template">
+        <ControlTemplate>
+          <Border Background="{TemplateBinding Background}" CornerRadius="12" Padding="11,4" Margin="0,0,6,0">
+            <ContentPresenter Content="{TemplateBinding Content}" Foreground="{TemplateBinding Foreground}" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+          </Border>
+        </ControlTemplate>
+      </Setter>
+    </Style>
+    <Style Selector="RadioButton.chip:pointerover"><Setter Property="Background" Value="#DFE1DD"/></Style>
+    <Style Selector="RadioButton.chip:checked"><Setter Property="Background" Value="#A64600"/><Setter Property="Foreground" Value="White"/></Style>
+    <Style Selector="RadioButton.chip:checked:pointerover"><Setter Property="Background" Value="#8C3B00"/></Style>
+    <Style Selector="RadioButton.chip:disabled"><Setter Property="Opacity" Value="0.55"/></Style>
+
+    <Style Selector="TextBox"><Setter Property="Background" Value="White"/><Setter Property="Foreground" Value="#20252B"/><Setter Property="BorderBrush" Value="#C9CDCB"/><Setter Property="CornerRadius" Value="8"/><Setter Property="Padding" Value="9,5"/><Setter Property="FontSize" Value="13"/></Style>
+    <Style Selector="RadioButton.segment"><Setter Property="FontSize" Value="13"/></Style>
+    <Style Selector="TextBox.dark"><Setter Property="Padding" Value="8,3"/><Setter Property="FontSize" Value="12"/><Setter Property="FontFamily" Value="Consolas, Menlo, monospace"/><Setter Property="MinHeight" Value="26"/><Setter Property="VerticalContentAlignment" Value="Center"/></Style>
+    <Style Selector="Border.card.tight"><Setter Property="Padding" Value="14,10"/></Style>
+    <Style Selector="TextBox:pointerover /template/ Border#PART_BorderElement"><Setter Property="Background" Value="White"/><Setter Property="BorderBrush" Value="#A64600"/></Style>
+    <Style Selector="TextBox:focus /template/ Border#PART_BorderElement"><Setter Property="Background" Value="White"/><Setter Property="BorderBrush" Value="#A64600"/></Style>
+    <Style Selector="TextBox /template/ TextBlock#PART_Watermark"><Setter Property="Foreground" Value="#6E767B"/></Style>
+    <Style Selector="CheckBox"><Setter Property="Foreground" Value="#20252B"/></Style>
+    <Style Selector="CheckBox.light"><Setter Property="Foreground" Value="White"/></Style>
+    <Style Selector="Button.tool"><Setter Property="Background" Value="#2A3138"/><Setter Property="Foreground" Value="#E6EAED"/><Setter Property="Padding" Value="9,4"/><Setter Property="CornerRadius" Value="6"/><Setter Property="FontSize" Value="12"/></Style>
+    <Style Selector="Button.tool:pointerover /template/ ContentPresenter#PART_ContentPresenter"><Setter Property="Background" Value="#3A424A"/><Setter Property="Foreground" Value="White"/></Style>
+    <Style Selector="Button.tool:pressed /template/ ContentPresenter#PART_ContentPresenter"><Setter Property="Background" Value="#4B545D"/><Setter Property="Foreground" Value="White"/></Style>
+    <Style Selector="Button.tool:disabled /template/ ContentPresenter#PART_ContentPresenter"><Setter Property="Background" Value="#23292F"/><Setter Property="Foreground" Value="#6E777F"/></Style>
+    <Style Selector="ToggleButton.tool"><Setter Property="Background" Value="#2A3138"/><Setter Property="Foreground" Value="#E6EAED"/><Setter Property="Padding" Value="9,4"/><Setter Property="CornerRadius" Value="6"/><Setter Property="FontSize" Value="12"/></Style>
+    <Style Selector="ToggleButton.tool:pointerover /template/ ContentPresenter#PART_ContentPresenter"><Setter Property="Background" Value="#3A424A"/><Setter Property="Foreground" Value="White"/></Style>
+    <Style Selector="ToggleButton.tool:checked /template/ ContentPresenter#PART_ContentPresenter"><Setter Property="Background" Value="#2D9CDB"/><Setter Property="Foreground" Value="White"/></Style>
+    <Style Selector="ToggleButton.tool:checked:pointerover /template/ ContentPresenter#PART_ContentPresenter"><Setter Property="Background" Value="#2487BF"/><Setter Property="Foreground" Value="White"/></Style>
+  </Window.Styles>
+
+  <Grid ColumnDefinitions="232,*">
+    <!-- Step rail -->
+    <Border Background="#22282E" Padding="16"><Grid RowDefinitions="Auto,*,Auto">
+      <StackPanel Margin="6,16,6,26" Spacing="4">
+        <TextBlock x:Name="AppNameLabel" Text="Analog Repair" Foreground="White" FontWeight="Bold" FontSize="18" Margin="0,4,0,0"/>
+        <TextBlock Text="Tape &amp; film restoration" Foreground="#A9B1B7" FontSize="11"/>
+      </StackPanel>
+      <StackPanel Grid.Row="1">
+        <TextBlock Text="WORKFLOW" Foreground="#8E989F" FontSize="10" FontWeight="Bold" Margin="8,0,0,6"/>
+        <Button x:Name="ImportStep" Classes="step current" Click="ImportStep_Click"><StackPanel><TextBlock Text="1  Import" FontWeight="SemiBold" Foreground="{Binding $parent[Button].Foreground}"/><TextBlock x:Name="ImportHint" Text="Add recordings" FontSize="11" Foreground="#9AA3A9"/></StackPanel></Button>
+        <Button x:Name="TrimStep" Classes="step" Click="TrimStep_Click"><StackPanel><TextBlock Text="2  Trim" FontWeight="SemiBold" Foreground="{Binding $parent[Button].Foreground}"/><TextBlock x:Name="TrimHint" Text="Pick the part to keep" FontSize="11" Foreground="#9AA3A9"/></StackPanel></Button>
+        <Button x:Name="CleanStep" Classes="step" Click="CleanStep_Click"><StackPanel><TextBlock Text="3  Repair" FontWeight="SemiBold" Foreground="{Binding $parent[Button].Foreground}"/><TextBlock x:Name="CleanHint" Text="Repair, date stamp, size" FontSize="11" Foreground="#9AA3A9"/></StackPanel></Button>
+        <Button x:Name="ExportStep" Classes="step" Click="ExportStep_Click"><StackPanel><TextBlock Text="4  Export" FontWeight="SemiBold" Foreground="{Binding $parent[Button].Foreground}"/><TextBlock x:Name="ExportHint" Text="Render the queue" FontSize="11" Foreground="#9AA3A9"/></StackPanel></Button>
+      </StackPanel>
+      <TextBlock Grid.Row="2" Text="Runs locally &#x00B7; open source" Foreground="#8E989F" FontSize="10" Margin="8"/>
+    </Grid></Border>
+
+    <Grid Grid.Column="1" RowDefinitions="Auto,*,Auto">
+      <!-- Header -->
+      <Border Background="White" BorderBrush="#E3E4E0" BorderThickness="0,0,0,1" Padding="28,16">
+        <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="10">
+          <StackPanel><TextBlock x:Name="PageTitle" Text="Import" FontSize="26" FontWeight="Bold" Foreground="#20252B"/><TextBlock x:Name="PageSubtitle" Text="Bring in your digitised tapes and film." Foreground="#5F676D" Margin="0,3,0,0"/></StackPanel>
+          <ComboBox x:Name="ClipPicker" Grid.Column="1" Width="300" VerticalAlignment="Center" PlaceholderText="No clip selected" SelectionChanged="ClipPicker_Changed"/>
+          <Border Grid.Column="2" Background="#FFF0E6" CornerRadius="14" Padding="12,6" VerticalAlignment="Center"><TextBlock x:Name="CountLabel" Text="0 clips" Foreground="#9A4100" FontWeight="SemiBold"/></Border>
+        </Grid>
+      </Border>
+
+      <ScrollViewer Grid.Row="1" x:Name="PageScroller"><Grid x:Name="PageContent" Margin="28,22" MaxWidth="1180">
+
+        <!-- 1 Import -->
+        <StackPanel x:Name="ImportPage" Spacing="16">
+          <Border x:Name="DropZone" Background="#FFF8F2" BorderBrush="#E7B48F" BorderThickness="2" CornerRadius="14" Padding="28" DragDrop.AllowDrop="True">
+            <StackPanel Spacing="10" HorizontalAlignment="Center">
+              <TextBlock Text="Drop tape or film transfers here" FontSize="20" FontWeight="SemiBold" Foreground="#20252B" HorizontalAlignment="Center"/>
+              <TextBlock Text=".mpg .vob .dv .avi .mov .mkv .mp4 .m4v .m2ts .mts .ts .webm from capture cards, DVD recorders, camcorders and film scanners" Classes="note" HorizontalAlignment="Center"/>
+              <StackPanel Orientation="Horizontal" Spacing="10" HorizontalAlignment="Center" Margin="0,6,0,0">
+                <Button Classes="accent" Content="Browse files" Click="Add_Click"/>
+                <Button Content="Add a whole folder" Click="AddFolder_Click"/>
+              </StackPanel>
+            </StackPanel>
+          </Border>
+          <Border Classes="card"><StackPanel Spacing="10">
+            <TextBlock Text="QUEUE" Classes="eyebrow"/>
+            <TextBlock x:Name="QueueEmpty" Text="Nothing here yet. Every clip you add keeps its own cut and is exported with the same repair settings." Classes="note"/>
+            <StackPanel x:Name="QueueList" Spacing="6"/>
+            <TextBlock x:Name="ImportStatus" Text="" Classes="note"/>
+          </StackPanel></Border>
+        </StackPanel>
+
+        <!-- 2 Trim: a full-bleed dark workspace, the preview takes every spare pixel -->
+        <Grid x:Name="TrimPage" IsVisible="False" RowDefinitions="*,Auto,Auto,Auto,Auto" Background="#1B2025">
+          <Grid x:Name="PreviewHost" Background="#101418">
+            <Image x:Name="TrimPreview" Stretch="Uniform" Margin="16,12"/>
+            <Border Background="#B0000000" CornerRadius="6" Padding="8,4" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="24,20"><TextBlock x:Name="PlayheadLabel" Text="00:00.00" Foreground="White" FontFamily="Consolas, Menlo, monospace" FontWeight="SemiBold"/></Border>
+            <Border x:Name="HoverBadge" IsVisible="False" Background="#B0000000" CornerRadius="6" Padding="8,4" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="24,20"><TextBlock x:Name="HoverLabel" Text="" Foreground="#AEB6BC" FontFamily="Consolas, Menlo, monospace"/></Border>
+            <Border x:Name="TrimLoading" IsVisible="False" Background="#B0000000" CornerRadius="6" Padding="8,4" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="24,20"><TextBlock Text="Loading frame&#x2026;" Foreground="White"/></Border>
+          </Grid>
+          <Border Grid.Row="1" Margin="16,10,16,0">
+            <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="10">
+              <StackPanel Orientation="Horizontal" Spacing="4">
+                <Button Classes="dark" Content="&#x23EE;" ToolTip.Tip="Go to start (Home)" Click="GoStart_Click"/>
+                <Button Classes="dark" Content="&#x25C0;&#x25C0;" ToolTip.Tip="Previous cut edge or bookmark (Page Up)" Click="PrevEdge_Click"/>
+                <Button Classes="dark" Content="&#x2212;1 s" ToolTip.Tip="Back one second (Left; Shift: 5 s)" Click="Back_Click"/>
+                <Button x:Name="PlayButton" Classes="dark" Content="&#x25B6; Play" MinWidth="92" ToolTip.Tip="Quick play through the kept parts (Space)" Click="Play_Click"/>
+                <Button Classes="dark" Content="+1 s" ToolTip.Tip="Forward one second (Right; Shift: 5 s)" Click="Forward_Click"/>
+                <Button Classes="dark" Content="&#x25B6;&#x25B6;" ToolTip.Tip="Next cut edge or bookmark (Page Down)" Click="NextEdge_Click"/>
+                <Button Classes="dark" Content="&#x23ED;" ToolTip.Tip="Go to end (End)" Click="GoEnd_Click"/>
+              </StackPanel>
+              <TextBlock x:Name="CutSummary" Grid.Column="1" Text="" Foreground="#FFC08E" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+              <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="4">
+                <ToggleButton x:Name="SnapToggle" Classes="tool" Content="Snap" IsChecked="True" ToolTip.Tip="Snap to cut edges, bookmarks and the ruler while dragging" IsCheckedChanged="Snap_Changed"/>
+                <Button Classes="tool" Content="&#x2212;" Width="30" Padding="0,4" FontSize="15" FontWeight="SemiBold" ToolTip.Tip="Zoom out (-)" Click="ZoomOut_Click"/>
+                <Slider x:Name="ZoomSlider" Width="110" Minimum="1" Maximum="60" Value="1" VerticalAlignment="Center" ValueChanged="Zoom_Changed"/>
+                <Button Classes="tool" Content="+" Width="30" Padding="0,4" FontSize="15" FontWeight="SemiBold" ToolTip.Tip="Zoom in (+, or Ctrl + mouse wheel)" Click="ZoomIn_Click"/>
+                <Button Classes="tool" Content="Fit" ToolTip.Tip="Show the whole clip" Click="ZoomFit_Click"/>
+              </StackPanel>
+            </Grid>
+          </Border>
+          <Border Grid.Row="2" Margin="16,8,16,0">
+            <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="10">
+              <StackPanel Orientation="Horizontal" Spacing="4">
+                <Button Classes="tool" Content="[ Start here" ToolTip.Tip="The current part starts at the playhead (I)" Click="MarkIn_Click"/>
+                <Button Classes="tool" Content="End here ]" ToolTip.Tip="The current part ends at the playhead (O)" Click="MarkOut_Click"/>
+                <Button Classes="tool" Content="&#x2702; Split" ToolTip.Tip="Split the part at the playhead into two (S)" Click="Split_Click"/>
+                <Button Classes="tool" Content="Remove part" ToolTip.Tip="Remove the part under the playhead (Delete)" Click="DeleteSegment_Click"/>
+                <Border Width="1" Background="#3A424A" Margin="6,4"/>
+                <Button Classes="tool" Content="Bookmark" ToolTip.Tip="Set or remove a bookmark at the playhead (B)" Click="Bookmark_Click"/>
+                <Border Width="1" Background="#3A424A" Margin="6,4"/>
+                <Button x:Name="UndoButton" Classes="tool" Content="Undo" ToolTip.Tip="Undo (Ctrl+Z)" Click="Undo_Click" IsEnabled="False"/>
+                <Button x:Name="RedoButton" Classes="tool" Content="Redo" ToolTip.Tip="Redo (Ctrl+Y)" Click="Redo_Click" IsEnabled="False"/>
+              </StackPanel>
+              <Button Grid.Column="2" Classes="tool" Content="Keep whole clip" ToolTip.Tip="Keep everything again" Click="ResetCut_Click"/>
+            </Grid>
+          </Border>
+          <ScrollViewer Grid.Row="3" x:Name="StripScroller" Margin="16,10,16,0" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled" SizeChanged="Strip_SizeChanged">
+            <local:TimelineView x:Name="Timeline"/>
+          </ScrollViewer>
+          <Grid Grid.Row="4" Margin="16,6,16,10">
+            <Grid ColumnDefinitions="Auto,Auto,Auto,Auto,Auto,*,Auto" ColumnSpacing="8">
+              <TextBlock x:Name="SegmentLabel" Text="START" Foreground="#AEB6BC" FontSize="10" FontWeight="Bold" VerticalAlignment="Center"/>
+              <TextBox x:Name="InBox" Grid.Column="1" Width="96" Classes="dark" LostFocus="CutBox_Changed" KeyDown="CutBox_KeyDown"/>
+              <TextBlock Grid.Column="2" Text="END" Foreground="#AEB6BC" FontSize="10" FontWeight="Bold" VerticalAlignment="Center"/>
+              <TextBox x:Name="OutBox" Grid.Column="3" Width="96" Classes="dark" LostFocus="CutBox_Changed" KeyDown="CutBox_KeyDown"/>
+              <StackPanel Grid.Column="4" Orientation="Horizontal" Spacing="6" VerticalAlignment="Center" Margin="10,0,0,0">
+                <TextBlock x:Name="KeptLabel" Text="&#x2014;" Foreground="#FFC08E" FontSize="12" FontWeight="SemiBold"/>
+                <TextBlock x:Name="PartsLabel" Text="" Foreground="#AEB6BC" FontSize="12"/>
+              </StackPanel>
+              <TextBlock x:Name="StripStatus" Grid.Column="5" Text="Choose a clip to build its filmstrip." Foreground="#AEB6BC" FontSize="11" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" Margin="12,0"/>
+              <Border Grid.Column="6" Background="#2A3138" CornerRadius="6" Padding="8,3" VerticalAlignment="Center"
+                      ToolTip.Tip="Space play &#x00B7; &#x2190; &#x2192; 1 s (Shift 5 s) &#x00B7; I / O start and end here &#x00B7; S split &#x00B7; Delete remove part &#x00B7; B bookmark &#x00B7; Ctrl+Z / Ctrl+Y undo and redo &#x00B7; + &#x2212; zoom, Ctrl+wheel zooms, wheel scrolls &#x00B7; Page Up / Down next cut &#x00B7; F11 full screen">
+                <TextBlock Text="Keys ?" Foreground="#AEB6BC" FontSize="11"/>
+              </Border>
+            </Grid>
+          </Grid>
+        </Grid>
+
+        <!-- 3 Clean -->
+        <Grid x:Name="CleanPage" IsVisible="False" ColumnDefinitions="430,*" ColumnSpacing="14">
+          <StackPanel Spacing="8">
+            <Border Classes="card tight"><StackPanel Spacing="8">
+              <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
+                <TextBlock Text="PRESET" Classes="eyebrow" VerticalAlignment="Center"/>
+                <Grid Grid.Column="1" ColumnDefinitions="*,Auto" ColumnSpacing="6">
+                  <ComboBox x:Name="PresetChoice" HorizontalAlignment="Stretch" PlaceholderText="Choose a preset" SelectionChanged="Preset_Changed"/>
+                  <Button x:Name="DeletePresetButton" Grid.Column="1" Content="Delete" IsEnabled="False" Click="DeletePreset_Click"/>
+                </Grid>
+              </Grid>
+              <Grid ColumnDefinitions="*,Auto" ColumnSpacing="6">
+                <TextBox x:Name="PresetName" PlaceholderText="Save the current settings as&#x2026;" KeyDown="PresetName_KeyDown"/>
+                <Button Grid.Column="1" Content="Save" Click="SavePreset_Click"/>
+              </Grid>
+              <TextBlock x:Name="PresetStatus" Classes="note" FontSize="11" IsVisible="False" Text=""/>
+              <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10" Margin="0,4,0,0">
+                <TextBlock Text="SOURCE" Classes="eyebrow" VerticalAlignment="Center"/>
+                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                  <RadioButton x:Name="TapeChoice" Classes="segment" GroupName="source" Content="Tape" IsChecked="True" ToolTip.Tip="VHS, S-VHS, Hi8, Video8 and camcorder tapes" IsCheckedChanged="Source_Changed"/>
+                  <RadioButton x:Name="FilmChoice" Classes="segment" GroupName="source" Content="Film" ToolTip.Tip="8 mm, Super 8 and 16 mm film" IsCheckedChanged="Source_Changed"/>
+                </StackPanel>
+              </Grid>
+              <TextBlock x:Name="SourceNote" Classes="note" FontSize="11" TextWrapping="Wrap" Text="Tape (VHS, Hi8, camcorder): tracking noise, the torn bottom band, wobbling lines and smeared colour."/>
+            </StackPanel></Border>
+            <Border Classes="card tight"><StackPanel Spacing="6">
+              <TextBlock Text="REPAIR" Classes="eyebrow"/>
+              <StackPanel x:Name="ColourCard" Spacing="2">
+                <Grid ColumnDefinitions="*,Auto"><TextBlock Text="Colour repair" Classes="label" ToolTip.Tip="Colour noise and the colour smear of tape, re-estimated from the frames around; black-and-white footage is left alone"/><TextBlock Grid.Column="1" x:Name="ColourValue" Text="60" Classes="label"/></Grid>
+                <Slider x:Name="ColorSlider" Minimum="0" Maximum="100" Value="60" ValueChanged="Setting_Changed"/>
+              </StackPanel>
+              <StackPanel Spacing="2">
+                <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="10"><TextBlock Text="Noise reduction" Classes="label" VerticalAlignment="Center"/><CheckBox x:Name="KeepGrain" Grid.Column="1" Content="Keep film grain" FontSize="11" MinHeight="0" Padding="4,0,0,0" ToolTip.Tip="Leave a little of the grain in, so film does not look waxy" IsCheckedChanged="Setting_Changed"/><TextBlock Grid.Column="2" x:Name="NoiseValue" Text="50" Classes="label" VerticalAlignment="Center"/></Grid>
+                <Slider x:Name="NoiseSlider" Minimum="0" Maximum="100" Value="50" ValueChanged="Setting_Changed"/>
+              </StackPanel>
+              <!-- Tape and film faults, two sliders per row to keep the page on one screen. -->
+              <Grid x:Name="MovieCard" ColumnDefinitions="*,*" RowDefinitions="Auto,Auto" ColumnSpacing="16">
+                <StackPanel Spacing="2">
+                  <Grid ColumnDefinitions="*,Auto"><TextBlock Text="Stabilise" Classes="label" ToolTip.Tip="Gate weave and camera shake; pans and zooms stay"/><TextBlock Grid.Column="1" x:Name="StabiliseValue" Text="40" Classes="label"/></Grid>
+                  <Slider x:Name="StabiliseSlider" Minimum="0" Maximum="100" Value="40" ToolTip.Tip="Gate weave and camera shake; pans and zooms stay" ValueChanged="Setting_Changed"/>
+                </StackPanel>
+                <StackPanel Grid.Column="1" Spacing="2">
+                  <Grid ColumnDefinitions="*,Auto"><TextBlock Text="Flicker" Classes="label" ToolTip.Tip="Brightness that jumps from frame to frame; slow exposure changes stay"/><TextBlock Grid.Column="1" x:Name="FlickerValue" Text="50" Classes="label"/></Grid>
+                  <Slider x:Name="FlickerSlider" Minimum="0" Maximum="100" Value="50" ToolTip.Tip="Brightness that jumps from frame to frame; slow exposure changes stay" ValueChanged="Setting_Changed"/>
+                </StackPanel>
+                <StackPanel Grid.Row="1" Spacing="2">
+                  <Grid ColumnDefinitions="*,Auto"><TextBlock Text="Dust &amp; scratches" Classes="label" ToolTip.Tip="Specks, dirt, tape dropouts and vertical scratches, refilled from the frames around"/><TextBlock Grid.Column="1" x:Name="DustValue" Text="50" Classes="label"/></Grid>
+                  <Slider x:Name="DustSlider" Minimum="0" Maximum="100" Value="50" ToolTip.Tip="Specks, dirt, tape dropouts and vertical scratches, refilled from the frames around" ValueChanged="Setting_Changed"/>
+                </StackPanel>
+                <StackPanel Grid.Row="1" Grid.Column="1" Spacing="2">
+                  <Grid ColumnDefinitions="*,Auto"><TextBlock Text="Tape noise" Classes="label" ToolTip.Tip="VHS tracking bands, the torn band at the bottom and wobbling lines"/><TextBlock Grid.Column="1" x:Name="TapeValue" Text="50" Classes="label"/></Grid>
+                  <Slider x:Name="TapeSlider" Minimum="0" Maximum="100" Value="50" ToolTip.Tip="VHS tracking bands, the torn band at the bottom and wobbling lines" ValueChanged="Setting_Changed"/>
+                </StackPanel>
+              </Grid>
+              <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8" Margin="0,4,0,0">
+                <CheckBox x:Name="RemoveStamp" Content="Remove date stamp (burned-in date and time)" IsCheckedChanged="Setting_Changed"/>
+                <Button x:Name="DetectStampButton" Grid.Column="1" Content="Show" ToolTip.Tip="Mark what would be removed on the frame at the playhead" Click="DetectStamp_Click"/>
+              </Grid>
+              <TextBlock x:Name="StampStatus" Classes="note" FontSize="11" TextWrapping="Wrap" Text="A stamp is found by its parts that stay in place while the picture moves; ticking seconds go with it."/>
+            </StackPanel></Border>
+            <Border Classes="card tight"><StackPanel Spacing="6">
+              <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="10">
+                <TextBlock Text="OUTPUT SIZE" Classes="eyebrow" VerticalAlignment="Center"/>
+                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                  <RadioButton x:Name="SizeOriginal" Classes="segment" GroupName="size" Content="Original" IsChecked="True" IsCheckedChanged="Setting_Changed"/>
+                  <RadioButton x:Name="Size150" Classes="segment" GroupName="size" Content="1.5&#x00D7;" IsCheckedChanged="Setting_Changed"/>
+                  <RadioButton x:Name="Size200" Classes="segment" GroupName="size" Content="2&#x00D7;" IsCheckedChanged="Setting_Changed"/>
+                </StackPanel>
+              </Grid>
+              <Grid ColumnDefinitions="*,Auto"><TextBlock Text="Detail" Classes="label"/><TextBlock Grid.Column="1" x:Name="DetailValue" Text="15" Classes="label"/></Grid>
+              <Slider x:Name="DetailSlider" Minimum="0" Maximum="100" Value="15" ValueChanged="Setting_Changed"/>
+              <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10" Margin="0,4,0,0">
+                <TextBlock Text="SPEED" Classes="eyebrow" VerticalAlignment="Center"/>
+                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                  <RadioButton x:Name="EffortFast" Classes="segment" GroupName="effort" Content="Fast" IsCheckedChanged="Effort_Changed"/>
+                  <RadioButton x:Name="EffortBalanced" Classes="segment" GroupName="effort" Content="Balanced" IsChecked="True" IsCheckedChanged="Effort_Changed"/>
+                  <RadioButton x:Name="EffortBest" Classes="segment" GroupName="effort" Content="Best" IsCheckedChanged="Effort_Changed"/>
+                </StackPanel>
+              </Grid>
+              <TextBlock x:Name="EffortNote" Classes="note" FontSize="11" TextWrapping="Wrap" Text="Recommended. Nearly the quality of Best in clearly less time."/>
+            </StackPanel></Border>
+          </StackPanel>
+          <StackPanel Grid.Column="1" Spacing="14">
+            <Border Classes="card"><StackPanel Spacing="10">
+              <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
+                <StackPanel><TextBlock Text="CHECK THE RESULT" Classes="eyebrow"/><TextBlock x:Name="PreviewTitle" Text="Frame at the trim playhead" Classes="heading" FontSize="17"/></StackPanel>
+                <Button x:Name="PreviewButton" Grid.Column="1" Classes="accent" Content="Render this frame" Click="Preview_Click" VerticalAlignment="Center"/>
+              </Grid>
+              <Grid x:Name="CompareCanvas" Height="430" Background="#1B2025" ClipToBounds="True" SizeChanged="Compare_SizeChanged" PointerPressed="Compare_PointerPressed" PointerMoved="Compare_PointerMoved" PointerReleased="Compare_PointerReleased">
+                <Image x:Name="CompareBefore" Stretch="Uniform"/>
+                <Image x:Name="CompareAfter" Stretch="Uniform"/>
+                <Border x:Name="CompareDivider" Width="2" Background="#F08A3A" HorizontalAlignment="Left" IsVisible="False"/>
+                <Border x:Name="CompareGrip" Width="26" Height="26" CornerRadius="13" Background="#F08A3A" HorizontalAlignment="Left" VerticalAlignment="Center" IsVisible="False" Cursor="SizeWestEast"><TextBlock Text="&#x25C2;&#x25B8;" Foreground="White" FontSize="10" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                <Border Background="#B0000000" CornerRadius="6" Padding="8,3" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="8"><TextBlock x:Name="CompareLeftLabel" Text="ORIGINAL" Foreground="White" FontSize="11" FontWeight="Bold"/></Border>
+                <Border Background="#B0A64600" CornerRadius="6" Padding="8,3" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="8"><TextBlock Text="REPAIRED" Foreground="White" FontSize="11" FontWeight="Bold"/></Border>
+                <ToggleButton x:Name="LookCompare" Classes="tool" Content="Compare without look" IsVisible="False" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="8" ToolTip.Tip="Left of the line: the repaired frame without the look instead of the original" IsCheckedChanged="LookCompare_Changed"/>
+                <TextBlock x:Name="CompareHint" Text="Render a frame to compare the original and the repaired picture." Foreground="#AEB6BC" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+              </Grid>
+              <Slider x:Name="CompareSlider" Minimum="0" Maximum="100" Value="50" IsVisible="False" ValueChanged="Compare_Changed"/>
+              <TextBlock x:Name="PreviewStatus" Classes="note" FontSize="12" Text="The preview runs the full chain on a few frames around the playhead, so it takes a few seconds. Drag the orange line in the picture to compare."/>
+            </StackPanel></Border>
+            <!-- Look: an optional finish, applied after every repair. Compact; the sliders fold out. -->
+            <Border Classes="card tight"><StackPanel Spacing="8">
+              <Grid ColumnDefinitions="Auto,Auto,*,Auto" ColumnSpacing="12">
+                <TextBlock Text="LOOK" Classes="eyebrow" VerticalAlignment="Center"/>
+                <ToggleSwitch x:Name="LookToggle" Grid.Column="1" OnContent="On" OffContent="Off" VerticalAlignment="Center" ToolTip.Tip="Give the repaired footage a finished look. Off leaves the picture exactly as repaired." IsCheckedChanged="LookToggle_Changed">
+                  <ToggleSwitch.Resources>
+                    <SolidColorBrush x:Key="ToggleSwitchFillOn" Color="#A64600"/>
+                    <SolidColorBrush x:Key="ToggleSwitchFillOnPointerOver" Color="#8C3B00"/>
+                    <SolidColorBrush x:Key="ToggleSwitchFillOnPressed" Color="#6F2F00"/>
+                  </ToggleSwitch.Resources>
+                </ToggleSwitch>
+                <TextBlock x:Name="LookNote" Grid.Column="2" Classes="note" FontSize="11" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" Text="Off: the picture stays exactly as repaired."/>
+                <Button x:Name="LookAdjustButton" Grid.Column="3" Content="Adjust" ToolTip.Tip="Show the five look sliders" Click="LookAdjust_Click"/>
+              </Grid>
+              <StackPanel x:Name="LookPresets" Orientation="Horizontal">
+                <RadioButton Classes="chip" GroupName="look" Content="Off" Tag="off" IsChecked="True" Click="LookPreset_Click"/>
+                <RadioButton Classes="chip" GroupName="look" Content="Clean" Tag="clean" ToolTip.Tip="A light grade and a hint of vignette" Click="LookPreset_Click"/>
+                <RadioButton Classes="chip" GroupName="look" Content="Cinematic" Tag="cinematic" ToolTip.Tip="Graded colour, soft glow, darker corners" Click="LookPreset_Click"/>
+                <RadioButton Classes="chip" GroupName="look" Content="Punchy" Tag="punchy" ToolTip.Tip="Strong contrast and colour, bright glow" Click="LookPreset_Click"/>
+                <RadioButton Classes="chip" GroupName="look" Content="Retro" Tag="retro" ToolTip.Tip="Heavy vignette, grain and colour fringes like an old projector" Click="LookPreset_Click"/>
+                <TextBlock x:Name="LookCustom" Text="Custom" IsVisible="False" FontSize="12" FontWeight="SemiBold" Foreground="#9A4100" VerticalAlignment="Center" Margin="4,0,0,0"/>
+              </StackPanel>
+              <Grid x:Name="LookSliders" IsVisible="False" IsEnabled="False" ColumnDefinitions="*,*" RowDefinitions="Auto,Auto,Auto" ColumnSpacing="18">
+                <StackPanel>
+                  <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="6"><TextBlock Text="Colour grade" Classes="label"/><TextBlock Grid.Column="1" Classes="note" FontSize="11" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Text="contrast, cool shadows, warm light"/><TextBlock Grid.Column="2" x:Name="LookGradeValue" Text="0" Classes="label"/></Grid>
+                  <Slider x:Name="LookGradeSlider" Minimum="0" Maximum="100" Value="0" ValueChanged="LookSlider_Changed"/>
+                </StackPanel>
+                <StackPanel Grid.Column="1">
+                  <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="6"><TextBlock Text="Glow" Classes="label"/><TextBlock Grid.Column="1" Classes="note" FontSize="11" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Text="bright parts bloom softly"/><TextBlock Grid.Column="2" x:Name="LookGlowValue" Text="0" Classes="label"/></Grid>
+                  <Slider x:Name="LookGlowSlider" Minimum="0" Maximum="100" Value="0" ValueChanged="LookSlider_Changed"/>
+                </StackPanel>
+                <StackPanel Grid.Row="1">
+                  <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="6"><TextBlock Text="Vignette" Classes="label"/><TextBlock Grid.Column="1" Classes="note" FontSize="11" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Text="darker corners"/><TextBlock Grid.Column="2" x:Name="LookVignetteValue" Text="0" Classes="label"/></Grid>
+                  <Slider x:Name="LookVignetteSlider" Minimum="0" Maximum="100" Value="0" ValueChanged="LookSlider_Changed"/>
+                </StackPanel>
+                <StackPanel Grid.Row="1" Grid.Column="1">
+                  <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="6"><TextBlock Text="Film grain" Classes="label"/><TextBlock Grid.Column="1" Classes="note" FontSize="11" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Text="fine noise like film"/><TextBlock Grid.Column="2" x:Name="LookGrainValue" Text="0" Classes="label"/></Grid>
+                  <Slider x:Name="LookGrainSlider" Minimum="0" Maximum="100" Value="0" ValueChanged="LookSlider_Changed"/>
+                </StackPanel>
+                <StackPanel Grid.Row="2">
+                  <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="6"><TextBlock Text="Lens fringe" Classes="label"/><TextBlock Grid.Column="1" Classes="note" FontSize="11" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Text="colour seams towards the edges"/><TextBlock Grid.Column="2" x:Name="LookFringeValue" Text="0" Classes="label"/></Grid>
+                  <Slider x:Name="LookFringeSlider" Minimum="0" Maximum="100" Value="0" ValueChanged="LookSlider_Changed"/>
+                </StackPanel>
+                <TextBlock Grid.Row="2" Grid.Column="1" Classes="note" FontSize="11" VerticalAlignment="Center" Text="Applied last, after every repair. Render the frame to see it."/>
+              </Grid>
+            </StackPanel></Border>
+          </StackPanel>
+        </Grid>
+
+        <!-- 4 Export -->
+        <StackPanel x:Name="ExportPage" IsVisible="False" Spacing="14">
+          <Border Classes="card tight"><StackPanel Spacing="10">
+            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
+              <TextBlock Text="DESTINATION AND SETTINGS" Classes="eyebrow" VerticalAlignment="Center"/>
+              <Button x:Name="ExportFoldButton" Grid.Column="1" Content="Hide settings" IsVisible="False" Click="ExportFold_Click"/>
+            </Grid>
+            <StackPanel x:Name="ExportDetails" Spacing="10">
+            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8"><TextBox x:Name="OutputFolder" PlaceholderText="Folder for the repaired files"/><Button Grid.Column="1" Content="Choose folder" Click="OutputFolder_Click"/></Grid>
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="14">
+              <StackPanel Spacing="4"><TextBlock Text="FILE FORMAT" Classes="label"/><ComboBox x:Name="FormatChoice" HorizontalAlignment="Stretch" SelectionChanged="Format_Changed"/></StackPanel>
+              <TextBlock x:Name="FormatNote" Grid.Column="1" Classes="note" FontSize="12" VerticalAlignment="Bottom" Margin="0,0,0,4" Text=""/>
+            </Grid>
+            <Grid ColumnDefinitions="*,*,2*" ColumnSpacing="14">
+              <StackPanel Spacing="4"><TextBlock Text="QUALITY (14 BEST &#x2013; 32 SMALLEST)" Classes="label"/><NumericUpDown x:Name="QualityValue" Minimum="14" Maximum="32" Value="18"/></StackPanel>
+              <StackPanel Grid.Column="1" Spacing="4"><TextBlock Text="SIZE LIMIT, MB (0 = NONE)" Classes="label"/><NumericUpDown x:Name="SizeCap" Minimum="0" Maximum="10000" Value="0"/></StackPanel>
+              <StackPanel Grid.Column="2" Spacing="4"><TextBlock Text="CAPTION BURNED INTO THE VIDEO (OPTIONAL)" Classes="label"/><TextBox x:Name="CaptionText" PlaceholderText="e.g. Summer holiday 1987"/></StackPanel>
+            </Grid>
+            <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="18">
+              <StackPanel Spacing="4"><TextBlock Text="FILE NAME SUFFIX" Classes="label"/><TextBox x:Name="SuffixBox" Text="-repaired" LostFocus="ExportOption_Changed"/></StackPanel>
+              <CheckBox x:Name="JoinClips" Grid.Column="1" Content="Join all clips into one video" VerticalAlignment="Bottom" IsCheckedChanged="ExportOption_Changed"/>
+              <CheckBox x:Name="OpenAfterExport" Grid.Column="2" Content="Open the folder when done" IsChecked="True" VerticalAlignment="Bottom" IsCheckedChanged="ExportOption_Changed"/>
+            </Grid>
+            </StackPanel>
+            <StackPanel x:Name="ExportActions" Spacing="8">
+              <TextBlock x:Name="ExportSummary" Classes="note" FontSize="12" Text=""/>
+              <StackPanel Orientation="Horizontal" Spacing="10"><Button x:Name="ExportButton" Classes="accent" Content="Export queue" Click="Export_Clicked"/><Button x:Name="CancelExportButton" Content="Cancel export" IsEnabled="False" Click="CancelExport_Click"/></StackPanel>
+            </StackPanel>
+            <ProgressBar x:Name="ExportProgress" Minimum="0" Maximum="100" Height="6"/>
+            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
+              <TextBlock x:Name="ExportStatus" Text="Add clips in Import first." Classes="note" FontSize="12"/>
+              <TextBlock x:Name="ExportTime" Grid.Column="1" Text="" FontSize="12" FontWeight="SemiBold" Foreground="#20252B"/>
+            </Grid>
+          </StackPanel></Border>
+          <Border x:Name="ReviewPanel" IsVisible="False" Classes="card tight"><StackPanel Spacing="8">
+            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
+              <StackPanel><TextBlock Text="FINISHED CLIP" Classes="eyebrow"/><TextBlock x:Name="ReviewTitle" Classes="heading" FontSize="17" Text="Original and repaired result"/></StackPanel>
+              <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                <RadioButton x:Name="ReviewSideBySide" Classes="segment" GroupName="review" Content="Side by side" IsChecked="True" IsCheckedChanged="ReviewMode_Changed"/>
+                <RadioButton x:Name="ReviewWipeMode" Classes="segment" GroupName="review" Content="Wipe" IsCheckedChanged="ReviewMode_Changed"/>
+              </StackPanel>
+            </Grid>
+            <Grid x:Name="ReviewCanvas" Height="400" Background="#1B2025" ClipToBounds="True" SizeChanged="Review_SizeChanged">
+              <Grid x:Name="SideBySideView" ColumnDefinitions="*,*" ColumnSpacing="4">
+                <Image x:Name="SideBefore" Stretch="Uniform"/><Image x:Name="SideAfter" Grid.Column="1" Stretch="Uniform"/>
+                <Border Background="#B0000000" CornerRadius="6" Padding="8,3" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="8"><TextBlock Text="ORIGINAL" Foreground="White" FontSize="11" FontWeight="Bold"/></Border>
+                <Border Grid.Column="1" Background="#B0A64600" CornerRadius="6" Padding="8,3" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="8"><TextBlock Text="REPAIRED" Foreground="White" FontSize="11" FontWeight="Bold"/></Border>
+              </Grid>
+              <Grid x:Name="WipeView" IsVisible="False" Background="Transparent" PointerPressed="Wipe_PointerPressed" PointerMoved="Wipe_PointerMoved" PointerReleased="Wipe_PointerReleased">
+                <Image x:Name="BeforeImage" Stretch="Uniform"/><Image x:Name="AfterImage" Stretch="Uniform"/>
+                <Border x:Name="Divider" Width="2" Background="#F08A3A" HorizontalAlignment="Left"/>
+                <Border x:Name="DividerGrip" Width="26" Height="26" CornerRadius="13" Background="#F08A3A" HorizontalAlignment="Left" VerticalAlignment="Center" Cursor="SizeWestEast"><TextBlock Text="&#x25C2;&#x25B8;" Foreground="White" FontSize="10" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+                <Border Background="#B0000000" CornerRadius="6" Padding="8,3" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="8"><TextBlock Text="ORIGINAL" Foreground="White" FontSize="11" FontWeight="Bold"/></Border>
+                <Border Background="#B0A64600" CornerRadius="6" Padding="8,3" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="8"><TextBlock Text="REPAIRED" Foreground="White" FontSize="11" FontWeight="Bold"/></Border>
+              </Grid>
+            </Grid>
+            <Slider x:Name="WipeSlider" Minimum="0" Maximum="100" Value="50" IsVisible="False" ValueChanged="Wipe_Changed"/>
+            <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="10">
+              <Button x:Name="ReviewPlayButton" Classes="dark" MinWidth="100" Content="&#x25B6; Play both" ToolTip.Tip="Play the original and the repaired clip in sync" Click="ReviewPlay_Click"/>
+              <Slider x:Name="ReviewSeek" Grid.Column="1" Minimum="0" Maximum="1" VerticalAlignment="Center" ValueChanged="ReviewSeek_Changed"/>
+              <TextBlock x:Name="ReviewTime" Grid.Column="2" Text="0:00" FontSize="12" VerticalAlignment="Center" FontFamily="Consolas, Menlo, monospace"/>
+            </Grid>
+            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="14">
+              <Border Background="#FFF8F2" BorderBrush="#E7B48F" BorderThickness="1" CornerRadius="10" Padding="14,8" VerticalAlignment="Center">
+                <Grid ColumnDefinitions="Auto,Auto,Auto" ColumnSpacing="28">
+                  <StackPanel><TextBlock Text="GAINED SO FAR" Classes="label"/><TextBlock x:Name="GainLabel" Text="&#x2014;" FontSize="18" FontWeight="SemiBold" Foreground="#20252B"/></StackPanel>
+                  <StackPanel Grid.Column="1"><TextBlock Text="STILL POSSIBLE, NO LOSS" Classes="label"/><TextBlock x:Name="HeadroomLabel" Text="&#x2014;" FontSize="18" FontWeight="SemiBold" Foreground="#9A4100"/></StackPanel>
+                  <StackPanel Grid.Column="2"><TextBlock Text="COST OF A 2ND PASS" Classes="label"/><TextBlock x:Name="LossLabel" Text="&#x2014;" FontSize="18" FontWeight="SemiBold" Foreground="#9C3F1F"/></StackPanel>
+                </Grid>
+              </Border>
+              <StackPanel Grid.Column="1" Spacing="4" VerticalAlignment="Center">
+                <TextBlock x:Name="ReviewAssessment" Classes="note" FontSize="12" Text="Measuring the result&#x2026;"/>
+                <TextBlock x:Name="ReviewNote" Classes="note" FontSize="11" Text="Play both runs original and result in sync; drag the orange line in the picture to compare."/>
+              </StackPanel>
+            </Grid>
+            <StackPanel Orientation="Horizontal" Spacing="10">
+              <Button x:Name="AutoRefineButton" Classes="accent" FontSize="14" Padding="16,8" Content="&#x2728; Auto refine" ToolTip.Tip="Picks the settings from the measurement and exports the original again right away, as a new file. Nothing is lost." Click="AutoRefine_Click"/>
+              <Button Content="Open output folder" Click="OpenOutput_Click"/>
+              <Button Content="Try other settings" ToolTip.Tip="Back to Repair with this clip: the original is exported again, without any quality loss" Click="TryAgain_Click"/>
+              <Button Content="Refine the repaired file" ToolTip.Tip="Adds the repaired file to the queue for a second pass, e.g. stronger noise reduction or upscaling" Click="Refine_Click"/>
+            </StackPanel>
+          </StackPanel></Border>
+        </StackPanel>
+
+      </Grid></ScrollViewer>
+
+      <!-- Step footer -->
+      <Border Grid.Row="2" Background="White" BorderBrush="#E3E4E0" BorderThickness="0,1,0,0" Padding="28,12">
+        <Grid ColumnDefinitions="Auto,*,Auto">
+          <Button x:Name="BackButton" Content="&#x2190; Back" Click="Back_Step_Click"/>
+          <TextBlock x:Name="FooterNote" Grid.Column="1" Text="" Classes="note" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+          <Button x:Name="NextButton" Grid.Column="2" Classes="accent" Content="Next: Trim &#x2192;" Click="Next_Step_Click"/>
+        </Grid>
+      </Border>
+
+      <!-- Busy overlay: while the engine works, only this stays sharp -->
+      <Grid x:Name="BusyOverlay" Grid.Row="0" Grid.RowSpan="3" IsVisible="False" Background="#66101418">
+        <Border Background="White" CornerRadius="16" Padding="28,22" MinWidth="420" MaxWidth="560" HorizontalAlignment="Center" VerticalAlignment="Center" BoxShadow="0 12 40 0 #40000000">
+          <StackPanel Spacing="12">
+            <TextBlock x:Name="BusyTitle" Text="Working&#x2026;" Classes="heading"/>
+            <local:TapeProgress x:Name="BusyBar" IsIndeterminate="True" Margin="0,6,0,0"/>
+            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
+              <TextBlock x:Name="BusyText" Text="" Classes="note" FontSize="12" VerticalAlignment="Center"/>
+              <TextBlock x:Name="BusyTime" Grid.Column="1" Text="" FontSize="12" FontWeight="SemiBold" Foreground="#20252B" VerticalAlignment="Center"/>
+            </Grid>
+            <Button x:Name="BusyCancel" Content="Cancel" HorizontalAlignment="Right" IsVisible="False" Click="BusyCancel_Click"/>
+          </StackPanel>
+        </Border>
+      </Grid>
+    </Grid>
+  </Grid>
+</Window>

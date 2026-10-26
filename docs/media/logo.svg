@@ -1,0 +1,117 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="180" viewBox="0 0 300 180" role="img" aria-label="Analog Repair logo: a VHS video cassette whose two spools turn while the tape winds from one to the other and a small PLAY sign blinks">
+  <title>Analog Repair</title>
+  <style>
+    .body { fill: #24292e; }
+    .edge { stroke: #4a535c; }
+    .flap { fill: #1a1e22; }
+    .ridge { fill: #343b42; }
+    .window { fill: #7a7672; }
+    .glass { fill: #ffffff; fill-opacity: .08; }
+    .tape { fill: #3d2418; }
+    .hub { fill: #f3f3f0; }
+    .label { fill: #f3e3c7; }
+    .stripe { fill: #f08a3a; }
+    .shadow { fill: #6e7781; fill-opacity: .28; }
+
+    /* Both hubs turn the same way; the nearly empty one faster, as on a real tape. */
+    .spool { transform-box: fill-box; transform-origin: center; animation: spin 3s linear infinite; }
+    .spool.take-up { animation-duration: 1.4s; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* The tape winds from the left pack onto the right one, then back. */
+    .pack { transform-box: fill-box; transform-origin: center; animation: give 7s ease-in-out infinite alternate; }
+    .pack.take-up { animation-name: take; }
+    @keyframes give { from { transform: scale(1); } to { transform: scale(.42); } }
+    @keyframes take { from { transform: scale(1); } to { transform: scale(2.35); } }
+
+    /* The strip of tape behind the flap, running from spool to spool. */
+    .run { fill: none; stroke: #4a2f1f; stroke-width: 3.2; }
+    .sheen { fill: none; stroke: #c9a27e; stroke-width: 1.2; stroke-dasharray: 5 9; animation: run .7s linear infinite; }
+    @keyframes run { to { stroke-dashoffset: -14; } }
+
+    /* PLAY blinks like the display of a recorder. */
+    .play { animation: blink 1.2s steps(1) infinite; }
+    @keyframes blink { 0%, 60% { opacity: 1; } 61%, 100% { opacity: .3; } }
+
+    @media (prefers-reduced-motion: reduce) {
+      .spool, .pack, .sheen, .play { animation: none; }
+    }
+  </style>
+
+  <defs>
+    <clipPath id="window-area"><rect x="60" y="50" width="180" height="62" rx="5"/></clipPath>
+  </defs>
+
+  <ellipse class="shadow" cx="150" cy="171" rx="128" ry="5.5"/>
+
+  <!-- Body: flat and wide, about 1.8 : 1 like a real VHS cassette -->
+  <rect x="12" y="12" width="276" height="152" rx="7" class="body edge" stroke-width="3"/>
+
+  <!-- Hinged dust flap along the top edge, with its latch on the left -->
+  <rect x="12" y="12" width="276" height="24" rx="6" class="flap edge" stroke-width="3"/>
+  <rect x="22" y="31" width="256" height="2" fill="#2f363c"/>
+  <rect x="26" y="18" width="16" height="8" rx="2" fill="#3a424a"/>
+  <!-- The tape running behind the flap, between the two guide rollers -->
+  <circle cx="30" cy="42" r="3.5" fill="#3a424a"/>
+  <circle cx="270" cy="42" r="3.5" fill="#3a424a"/>
+  <path class="run" d="M30 44 L270 44"/>
+  <path class="sheen" d="M30 43.6 L270 43.6"/>
+
+  <!-- Grip ridges on both sides -->
+  <g class="ridge">
+    <rect x="18" y="62" width="4" height="40" rx="2"/><rect x="26" y="62" width="4" height="40" rx="2"/>
+    <rect x="270" y="62" width="4" height="40" rx="2"/><rect x="278" y="62" width="4" height="40" rx="2"/>
+  </g>
+
+  <!-- Wide clear window with two big spools: a full pack on the left, a nearly empty hub on the right -->
+  <rect x="60" y="50" width="180" height="62" rx="5" class="window" stroke="#121518" stroke-width="2.5"/>
+  <g clip-path="url(#window-area)">
+    <circle class="pack tape" cx="105" cy="84" r="40"/>
+    <circle class="pack take-up tape" cx="195" cy="84" r="17"/>
+    <!-- Spool flanges, faintly seen through the window -->
+    <circle cx="105" cy="84" r="44" fill="none" stroke="#ffffff" stroke-opacity=".25" stroke-width="1.5"/>
+    <circle cx="195" cy="84" r="44" fill="none" stroke="#ffffff" stroke-opacity=".25" stroke-width="1.5"/>
+  </g>
+  <g class="spool">
+    <circle cx="105" cy="84" r="15" fill="none"/>
+    <circle cx="105" cy="84" r="13" class="hub"/>
+    <g stroke="#24292e" stroke-width="2.6" stroke-linecap="round">
+      <line x1="105" y1="84" x2="105" y2="73"/>
+      <line x1="105" y1="84" x2="114.5" y2="89.5"/>
+      <line x1="105" y1="84" x2="95.5" y2="89.5"/>
+    </g>
+    <circle cx="105" cy="84" r="3.6" fill="#24292e"/>
+    <g class="hub">
+      <rect x="103.5" y="69" width="3" height="3" rx="1"/>
+      <rect x="103.5" y="69" width="3" height="3" rx="1" transform="rotate(120 105 84)"/>
+      <rect x="103.5" y="69" width="3" height="3" rx="1" transform="rotate(240 105 84)"/>
+    </g>
+  </g>
+  <g class="spool take-up">
+    <circle cx="195" cy="84" r="15" fill="none"/>
+    <circle cx="195" cy="84" r="13" class="hub"/>
+    <g stroke="#24292e" stroke-width="2.6" stroke-linecap="round">
+      <line x1="195" y1="84" x2="195" y2="73"/>
+      <line x1="195" y1="84" x2="204.5" y2="89.5"/>
+      <line x1="195" y1="84" x2="185.5" y2="89.5"/>
+    </g>
+    <circle cx="195" cy="84" r="3.6" fill="#24292e"/>
+    <g class="hub">
+      <rect x="193.5" y="69" width="3" height="3" rx="1"/>
+      <rect x="193.5" y="69" width="3" height="3" rx="1" transform="rotate(120 195 84)"/>
+      <rect x="193.5" y="69" width="3" height="3" rx="1" transform="rotate(240 195 84)"/>
+    </g>
+  </g>
+  <path d="M64 54 L118 54 L84 108 L64 108 Z" class="glass"/>
+
+  <!-- Paper label at the lower left: an orange stripe and a handwritten title -->
+  <rect x="34" y="122" width="150" height="32" rx="3" class="label"/>
+  <rect x="34" y="126" width="150" height="5" class="stripe"/>
+  <text x="44" y="149" font-family="'Segoe Print', 'Comic Sans MS', 'Bradley Hand', cursive" font-size="14" font-style="italic" font-weight="700" fill="#5b4636" transform="rotate(-3 44 149)">VHS · 1987</text>
+
+  <!-- PLAY, blinking like a recorder display -->
+  <g class="play" fill="#f08a3a">
+    <text x="214" y="146" font-family="Inter, Segoe UI, Helvetica, Arial, sans-serif" font-size="11" font-weight="700" letter-spacing=".8">PLAY</text>
+    <path d="M251 136.5 L259 141 L251 145.5 Z"/>
+  </g>
+</svg>

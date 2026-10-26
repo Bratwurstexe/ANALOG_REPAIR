@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Analog Repair
+Comment=Restore digitised VHS, Hi8 and camcorder tapes and 8 mm, Super 8 or 16 mm film
+Exec=AnalogRepair.Desktop %F
+Icon=analog-repair
+Categories=AudioVideo;Video;
+MimeType=video/mp4;video/quicktime;video/x-matroska;video/x-msvideo;video/mp2t;video/mpeg;video/x-dv;video/webm;
+Terminal=false
